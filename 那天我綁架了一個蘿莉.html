@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>那天我買了一個蘿莉</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: '微軟正黑體', Arial, sans-serif; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+        .container { background: rgba(255,255,255,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.25); width:100%; max-width:760px; padding:32px; position:relative; }
+        .title { text-align:center; font-size:26px; color:#333; margin-bottom:12px; font-weight:700; }
+        .hud { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .money { background:rgba(255,255,255,0.7); padding:8px 12px; border-radius:8px; font-weight:700; }
+        .hunger { width:220px; background:#eee; height:12px; border-radius:8px; overflow:hidden; }
+        .hunger-fill { height:100%; background:linear-gradient(90deg,#ffb86b,#ff7eb6); width:60%; transition:width .25s ease; }
+        .story-content { color:#444; line-height:1.8; font-size:15px; max-height:420px; overflow:auto; margin-bottom:18px; }
+        .choices { display:flex; flex-direction:column; gap:10px; }
+        .choice-btn { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:700; color:white; text-align:left; transition:all .18s ease; }
+        .choice-btn:hover { transform:translateX(6px); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+        .choice-btn.primary { background:#667eea; }
+        .choice-btn.secondary { background:#f093fb; }
+        .icon { width:20px; height:20px; flex:none; fill:currentColor; opacity:0.95; }
+        .title-icon { width:28px; height:28px; vertical-align:middle; margin-right:8px; fill:#ff7eb6; }
+        .restart-btn { margin-top:12px; padding:10px 18px; border-radius:8px; border:none; background:#667eea; color:#fff; font-weight:700; cursor:pointer; }
+        .decoration svg { position:absolute; opacity:0.06; pointer-events:none; }
+        .decoration .tl { left:-40px; top:-40px; width:160px; height:160px; }
+        .decoration .br { right:-40px; bottom:-40px; width:220px; height:220px; }
+        .scene-icon { display:flex; align-items:center; justify-content:center; height:88px; margin-bottom:12px; }
+        .scene-icon svg { width:84px; height:84px; opacity:0.95; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.35-9-7.5C1.5 10 4 6 8 6c2 0 3 1 4 1s2-1 4-1c4 0 6.5 4 5 7.5C19 16.65 12 21 12 21z"/></svg>那天我買了一個蘿莉</h1>
+        <div class="hud">
+            <div class="money" id="moneyDisplay">金錢: 50</div>
+            <div class="hunger"><div id="hungerFill" class="hunger-fill"></div></div>
+        </div>
+        <div class="decoration">
+            <svg class="tl" viewBox="0 0 100 100"><path d="M50 5 L61 39 H97 L67 59 L79 93 L50 73 L21 93 L33 59 L3 39 H39z"/></svg>
+            <svg class="br" viewBox="0 0 100 100"><circle cx="30" cy="30" r="28"/></svg>
+        </div>
+        <div id="sceneIcon" class="scene-icon"></div>
+        <div class="story-content" id="storyContent"></div>
+        <div class="choices" id="choicesContainer"></div>
+    <script>
+        const ICON_SVGS = {
+            star: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3L5.8 20l1-6.1L2 9.2l6.2-.9L12 3l3.8 5.3 6.2.9-4.8 4.7L18.2 20z"/></svg>',
+            heart: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.35-9-7.5C1.5 10 4 6 8 6c2 0 3 1 4 1s2-1 4-1c4 0 6.5 4 5 7.5C19 16.65 12 21 12 21z"/></svg>',
+            spark: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>',
+            border: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg>',
+            cannibal: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2 4 4 .5-3 2 1 4-4-2-4 2 1-4-3-2L10 6z"/></svg>',
+            orc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-8 4 4 4-4 4 8H4z"/></svg>',
+            bandits: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6h6l-5 4 2 6-6-3-6 3 2-6-5-4h6z"/></svg>',
+            monster: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 0 5 2 5 5 0 3-2 5-5 5s-5-2-5-5c0-3 2-5 5-5zM4 20c2-4 6-6 8-6s6 2 8 6H4z"/></svg>',
+            caravan: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h14v6H2zM20 8h2v10h-2zM16 6h2v12h-2z"/></svg>',
+            caravan_bandits: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6h6l-5 4 2 6-6-3-6 3 2-6-5-4h6z"/></svg>',
+            caravan_monster: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 0 5 2 5 5 0 3-2 5-5 5s-5-2-5-5c0-3 2-5 5-5zM4 20c2-4 6-6 8-6s6 2 8 6H4z"/></svg>',
+            merchant: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v2H3zM5 10h14v8H5zM8 12v4h2v-4z"/></svg>',
+            shrine: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 6h-3v7h-8V9H5z"/></svg>',
+            river: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6c6 6 6-6 12 0s6-6 12 0"/></svg>',
+            smuggler: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v4H3zM6 11h12v10H6z"/></svg>',
+            checkpoint: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h20v2H2zM7 11h10v10H7z"/></svg>'
+            ,home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 7h-3v8h-10v-8H4z"/></svg>'
+        };
+
+        // 新增變數
+        let hasEscort = false;
+        let pendingNext = null;
+        let weapon = null; // { name:'短劍', bonus:0.06 }
+        let merchantFavor = 50; // 商人行會好感 0-100
+        let banditAlly = false;
+
+        const roadEvents = [
+            { id: 'bandits', title: '遇到土匪', text: '一路上你遇到一群土匪，他們要求通行費或搶劫。', choices: [
+                { text: '交錢（-20 金錢）', effect: (s)=> { s.money -= 20; } },
+                { text: '反抗（可能受傷）', effect: (s)=> { s.hunger -= 15; const r = Math.random(); if (r < 0.2) { s.money = 0; } else if (r < 0.6) { s.money += 30; } else { s.money = Math.max(0, s.money - 10); } } }
+            ]},
+            { id: 'monster', title: '怪物襲擊', text: '黑暗中突然衝出怪物，你必須應付。', choices: [
+                    { text: '戰鬥（可能獲得獎勵）', effect: (s)=> { /* handled inline to use weapon */ },
+                    },
+                    { text: '逃跑（消耗體力）', effect: (s)=> { s.hunger -= 20; } }
+            ]},
+                { id: 'merchant', title: '路邊商人', text: '有個商人在路邊擺攤賣物品，可能有食物或武器可買。', choices: [
+                    { text: '買食物（-15 金錢，+30 飢餓）', effect: (s)=> { /* handled inline */ } },
+                    { text: '買短劍（-40 金錢，增加戰力）', effect: (s)=> {} },
+                    { text: '買長刀（-80 金錢，增加戰力）', effect: (s)=> {} },
+                    { text: '買鋼劍（-140 金錢，最大戰力）', effect: (s)=> {} },
+                    { text: '離開攤位', effect: (s)=> {} }
+                ]},
+            { id: 'caravan_bandits', title: '被土匪劫掠的商隊', text: '你發現一隊正被土匪劫掠的商隊，倘若救援可能能獲得補給或賞金。', choices: [
+                { text: '救援商隊（獲得免費食物）', effect: (s)=> { s.hunger += 30; if (Math.random() < 0.7) s.money += 25; } },
+                { text: '視而不見', effect: (s)=> { s.money -= 5; } }
+            ]},
+            { id: 'caravan_monster', title: '被怪物襲擊的商隊', text: '你發現一隊正被怪物襲擊的商隊，救援可獲得補給（主要為食物）。', choices: [
+                { text: '救援商隊（獲得免費食物）', effect: (s)=> { s.hunger += 30; } },
+                { text: '視而不見', effect: (s)=> { s.money -= 5; } }
+            ]}
+        ];
+
+        const gameStories = {
+            intro: {
+                icon: 'star',
+                text: `你朋友悄悄救下一位原本要賣給神聖王朝當奴隸的女孩名叫莉娜。她無處可去，你決定?`, effect: (s)=> { s.hunger + 200; },
+                choices: [
+                    { text: '開始救援計畫（籌錢、找路線）', next: 'plan' },
+                    { text: '直接帶回家養（暫時安全）', next: 'take_home' },
+                    { text: '放棄，結束故事', next: 'ending_reject', effect: (s)=> { s.hunger + 200; }, }
+                ]
+            },
+
+            plan: {
+                icon: 'checkpoint',
+                text: `你可以工作賺錢、找走私者打探消息，或在市場買食物餵飽莉娜。每個選項會改變金錢與飢餓值。注意：每次行動會消耗少量飢餓（-5）。`,
+                choices: [
+                    { text: '讓莉娜去工作（+30 金錢，-15 飢餓）', next: 'work', money: 30, hunger: -15 },
+                    { text: '前往神聖王朝邊境探路（-5 飢餓）', next: 'border', hunger: -5, travel: true },
+                    { text: '買食物（-10 金錢，+30 飢餓）', next: 'plan', money: -10, hunger: 30 },
+                    { text: '私下找走私者（可能是叛徒）', next: 'traitor_smuggler', money: -5 },
+                    { text: '完成救援計畫（需要 120 金錢）', next: 'ending_completed', requiredMoney: 120 }
+                ]
+            },
+
+            work: {
+                icon: 'heart',
+                text: `她做了一份臨時工作，拿到一些報酬。回去繼續計畫吧。`,
+                choices: [ { text: '回到計畫', next: 'plan' } ]
+            },
+
+            traitor_smuggler: {
+                icon: 'smuggler',
+                text: `這名走私者表面上願意幫忙，但你覺得他有些可疑。他要價便宜但可能會設下陷阱。`,
+                choices: [
+                    { text: '冒險信任（省錢但風險）', next: 'smuggler_betray', money: -30 },
+                    { text: '不信任，回到計畫', next: 'plan' }
+                ]
+            },
+
+            smuggler_betray: {
+                icon: 'bandits',
+                text: `走私者設下陷阱，導致你被跟蹤，損失一些金錢並被迫改路。`,
+                choices: [ { text: '硬闖換路（消耗）', next: 'border', money: -10, hunger: -10 } ]
+            },
+
+            border: {
+                icon: 'border',
+                text: `你來到神聖王朝的邊境，邊防森嚴，走私路線危險重重。要穿越這段路，你會被引導前往邊境附近的更荒涼地帶。`,
+                choices: [
+                    { text: '繼續前往食人族領地（冒險）', next: 'cannibal_territory', travel: true },
+                    { text: '暫時撤退回城', next: 'plan' }
+                ]
+            },
+
+            cannibal_territory: {
+                icon: 'cannibal',
+                text: `荒涼的林地中彌漫著血腥與古老圖騰的氣息。你得悄悄接近或面對他們的領袖。`,
+                choices: [
+                    { text: '挑戰食人族之王', next: 'cannibal_fight' },
+                    { text: '偷偷繞道避開', next: 'plan', hunger: -10 }
+                ]
+            },
+
+            cannibal_fight: {
+                icon: 'cannibal',
+                text: `你與食人族之王對峙，這場戰鬥將決定你之後的命運。`,
+                choices: [
+                    { text: '與之決一死戰', next: 'resolve_cannibal_fight' },
+                    { text: '撤退並放棄此路線', next: 'plan', hunger: -15 }
+                ]
+            },
+
+            resolve_cannibal_fight: {
+                icon: 'monster',
+                text: `正在決鬥……`,
+                choices: [ { text: '查看結果', next: 'fight_result', fight: true } ]
+            },
+
+            fight_result: {
+                icon: 'orc',
+                text: `戰鬥結果會依隨機與狀態判定。`,
+                choices: [ { text: '繼續', next: 'orc_presentation' } ]
+            },
+
+            orc_presentation: {
+                icon: 'orc',
+                text: `你把食人族之王的頭顱帶到獸人王朝作為談判籌碼。獸人王朝的領主非常高興，她決定派出最強的戰士護送你們，以保安全。`,
+                choices: [
+                    { text: '接受獸人護送（較安全）', next: 'orc_escort' , money: 0 },
+                    { text: '婉拒護送（自由但危險）', next: 'attempt_escape' }
+                ]
+            },
+
+            orc_escort: {
+                icon: 'orc',
+                text: `獸人王朝派出她最強的戰士作為護衛。你們在強力護送下前往下一段路程，路上的危險會大幅降低。`,
+                choices: [ { text: '在護送下出發', next: 'dwarf_escort_conflict', effect: ()=>{ hasEscort = true; }, travel: true } ]
+            },
+
+            attempt_escape: {
+                icon: 'river',
+                text: `你帶著莉娜出發了，路程仍有不可預期的危險。你決定前往矮人帝國，那裡可能有更安全的庇護所。`,
+                choices: [ { text: '前往矮人帝國', next: 'dwarf_kingdom_alone', travel: true } ]
+            },
+
+            dwarf_kingdom: {
+                icon: 'orc',
+                text: `經過漫長的旅途，你們終於來到了矮人帝國的邊界——一個由雄偉山脈環繞、挖掘進山體內的地下城市。矮人們看起來警惕但好客。你向他們解釋了你的處境，他們願意提供暫時的庇護。`,
+                choices: [
+                    { text: '接受矮人帝國的庇護（補充體力）', next: 'dwarf_challenges', hunger: 30, money: -10 },
+                    { text: '感謝後繼續前進', next: 'dwarf_passage' }
+                ]
+            },
+
+            dwarf_escort_conflict: {
+                icon: 'monster',
+                text: `當你帶著獸人戰士進入矮人帝國時，矮人的警衛立刻板起臉來。他們用帶著敵意的眼光看著獸人，低聲談論著"入侵者"和"獵物"之類的詞語。領袖走上前來，用不客氣的語氣說："獸人不受歡迎。我們矮人帝國與獸人朝代有著古老的仇恨。"`,
+                choices: [
+                    { text: '允許獸人戰士與矮人決鬥來證明價值', next: 'orc_dwarf_duel' },
+                    { text: '試圖調解，說明獸人是你的盟友', next: 'dwarf_mediation' },
+                    { text: '請獸人戰士在城外等候', next: 'dwarf_kingdom_alone' }
+                ]
+            },
+
+            orc_dwarf_duel: {
+                icon: 'monster',
+                text: `獸人戰士接受了挑戰。矮人帝國最強的戰士走出來與她對峙。整個大廳陷入緊張的沉默……`,
+                choices: [ { text: '查看決鬥結果', next: 'orc_dwarf_result' } ]
+            },
+
+            orc_dwarf_result: {
+                icon: 'heart',
+                text: `經過一場激烈的對戰，獸人戰士展現了令人印象深刻的力量與技巧。矮人戰士雖然沒有落敗，但明顯被壓制。觀看的矮人們開始鼓掌，他們的領袖點了點頭，表示尊敬。"看來我們低估了你們，"領袖說，"獸人也有勇士的尊嚴。你們可以進入矮人帝國。"`,
+                choices: [ { text: '進入矮人帝國接受庇護', next: 'dwarf_respected', hunger: 30, money: -10 } ]
+            },
+
+            dwarf_mediation: {
+                icon: 'heart',
+                text: `你向矮人領袖解釋了獸人戰士如何幫助你們逃脫，以及她如何保護了莉娜的安全。你提到古老的仇恨無法改變，但勇氣和正義是共通的。領袖聽後陷入沉思，最後說："或許是時候放下過去的成見了。"他轉向獸人戰士，說："歡迎進入矮人帝國。"`,
+                choices: [ { text: '進入矮人帝國接受庇護', next: 'dwarf_respected', hunger: 30, money: -10 } ]
+            },
+
+            dwarf_respected: {
+                icon: 'orc',
+                text: `在獸人戰士的陪伴下，你們被帶入了矮人帝國的深處。矮人們對獸人的態度逐漸轉變，開始用敬意看待她。在鍛造廠裡，你被邀請參加一個特殊的測試。`,
+                choices: [
+                    { text: '接受挑戰', next: 'dwarf_fight_special' },
+                    { text: '禮貌拒絕，繼續前進', next: 'dwarf_passage_orc' }
+                ]
+            },
+
+            dwarf_fight_special: {
+                icon: 'monster',
+                text: `你與矮人冠軍開始決鬥……`,
+                choices: [ { text: '查看結果', next: 'dwarf_result' } ]
+            },
+
+            dwarf_passage_orc: {
+                icon: 'border',
+                text: `離開矮人帝國時，獸人戰士突然停下腳步。她轉向你說："我在這裡的使命已經完成。你現在已經足夠強大，可以自己保護那個女孩。"她指向前方的路，"自由國度就在北方。去那裡，給她一個真正的未來。"她轉身走向來時的路，消失在地下通道中。`,
+                choices: [
+                    { text: '感謝獸人戰士，繼續前往自由國度', next: 'free_kingdom_border', travel: true, effect: ()=>{ hasEscort = false; } }
+                ]
+            },
+
+            dwarf_kingdom_alone: {
+                icon: 'home',
+                text: `你請獸人戰士在城外等候。當你進入矮人帝國後，矮人們對你的態度變得友善起來。"不帶那些野蠻人進來，明智的選擇，"一位矮人商人說。你接受了他們的庇護。`,
+                choices: [
+                    { text: '接受矮人帝國的庇護（補充體力）', next: 'dwarf_challenges', hunger: 30, money: -10 },
+                    { text: '感謝後等待獸人戰士的信息', next: 'dwarf_warrior_await' }
+                ]
+            },
+
+            dwarf_warrior_await: {
+                icon: 'border',
+                text: `經過幾天的等待，獸人戰士終於在城門前出現。但她的表情很嚴肅。"矮人已經發現莉娜的身份，"她警告說，"他們想將她交給神聖王朝領取賞金。我們必須立即離開。"`,
+                choices: [
+                    { text: '立即逃離，獸人將在大門前阻擋追兵', next: 'dwarf_escape_conflict' }
+                ]
+            },
+
+            dwarf_escape_conflict: {
+                icon: 'monster',
+                text: `當你帶著莉娜衝出城門時，矮人警衛試圖阻止你們。獸人戰士擋在你們身前，與警衛們對峙。"走！"她對你大喊，"我會在這裡延遲他們！"她拔出武器，準備與迎面而來的矮人戰士戰鬥。`,
+                choices: [
+                    { text: '與獸人並肩戰鬥', next: 'dwarf_gate_battle' },
+                    { text: '犧牲獸人逃脫', next: 'escape_without_orc' }
+                ]
+            },
+
+            dwarf_gate_battle: {
+                icon: 'monster',
+                text: `你和獸人戰士並肩作戰，奮力對抗矮人警衛。在一陣激烈的交戰後，你們終於突破了防線。獸人戰士受了傷，但仍然堅定地說："快走，別回顧。"`,
+                choices: [
+                    { text: '逃離矮人帝國領地', next: 'free_kingdom_border', travel: true, money: -20, hunger: -20 }
+                ]
+            },
+
+            escape_without_orc: {
+                icon: 'spark',
+                text: `你帶著莉娜拔腿就跑，留下獸人戰士獨自對抗矮人警衛。她的喊聲漸漸消失在身後。你成功逃脫了，但心中充滿了罪惡感——你背棄了那位曾救過你的勇士。`,
+                choices: [
+                    { text: '逃離矮人帝國領地，心感悔疚', next: 'free_kingdom_border', travel: true, money: 0, hunger: -15, effect: ()=>{ hasEscort = false; } }
+                ]
+            },
+
+            dwarf_challenges: {
+                icon: 'orc',
+                text: `在矮人帝國的鍛造廠，你被邀請參加一項測試——與矮人格鬥冠軍比賽。贏了會獲得報酬和敬重，輸了也沒有懲罰。`,
+                choices: [
+                    { text: '接受挑戰', next: 'dwarf_fight' },
+                    { text: '禮貌拒絕，繼續前進', next: 'dwarf_passage' }
+                ]
+            },
+
+            dwarf_fight: {
+                icon: 'monster',
+                text: `戰鬥開始……`,
+                choices: [ { text: '查看結果', next: 'dwarf_result' } ]
+            },
+
+            dwarf_result: {
+                icon: 'heart',
+                text: `無論勝敗，矮人們都尊敬你的勇氣。領袖給了你一份禮物：一張通往下一個國家的安全通行證。`,
+                choices: [ { text: '接受禮物並出發', next: 'dwarf_passage', money: 50 } ]
+            },
+
+            dwarf_passage: {
+                icon: 'border',
+                text: `離開矮人帝國後，你們登上了一片廣闊的高原。北方的地平線上，一座自由的城市漸漸顯現。自由國度就在前方，那是一片沒有壓制和奴隸的土地。`,
+                choices: [
+                    { text: '前往自由國度', next: 'free_kingdom_border', travel: true }
+                ]
+            },
+
+            free_kingdom_border: {
+                icon: 'river',
+                text: `經過幾週的旅途，你們終於看到了黎明——迎面而來的是一座開放的城市，旗幟上繪著自由的象徵。這就是自由國度，一個沒有壓制、沒有奴隸制的地方。邊境守衛看到你們後，臉上帶著歡迎的笑容。`,
+                choices: [
+                    { text: '進入自由國度，開始新生活', next: 'ending_success_free' }
+                ]
+            },
+
+            ending_success_free: {
+                icon: 'heart',
+                text: `你們終於到達了自由國度。在經歷了漫長而危險的旅途後，莉娜終於可以真正地呼吸自由的空氣。\\n\\n在自由國度，沒有人可以奴役她，沒有人可以傷害她。你安排她進入了一所學校，她可以像其他孩子一樣讀書和成長。每當她看向窗外時，眼中都閃爍著新生的希望。\\n\\n你找到了一份工作，在城市的碼頭工作。雖然辛苦，但你很滿足，因為看到莉娜每天都在進步，每天都在微笑。多年後，她成長為一位獨立、聰慧的年輕女性，決定自己的人生。而你，則是她永遠的守護者。\\n\\n＝＝＝ 遊戲結束：成功護送莉娜抵達自由國度 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_completed: {
+                icon: 'heart',
+                text: `你靠著辛苦工作、補給與可靠的情報，終於湊足了完成救援所需的資源。你避開神聖王朝的追捕，替莉娜找到安全的住處與新的身分。\n\n她終於不用再害怕明天，而你也明白，真正的救援不是把她藏起來，而是讓她能選擇自己的未來。\n\n＝＝＝ 遊戲結束：救援計畫完成 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_reject: {
+                icon: 'spark',
+                text: `你選擇不介入。幾個月後你收到消息，莉娜被送到集中營，或許一切有了轉機?\\n\\n＝＝＝ 遊戲結束：你在想什麼她被神聖王朝的人抓去當童工了 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            take_home: {
+                icon: 'home',
+                text: `你決定把莉娜帶回家收養，暫時給她遮風避雨與照顧。你面臨了人生中最重要的抉擇。`,
+                choices: [
+                    { text: '與莉娜成為一家人，相伴終身', next: 'ending_marriage' },
+                    { text: '背叛她，將她賣回神聖王朝成奴隸', next: 'ending_slavery' }
+                ]
+            },
+
+            ending_marriage: {
+                icon: 'heart',
+                text: `多年後，你們相互扶持，莉娜從一個被拋棄的女孩逐漸成長為堅強獨立的女性。你對她的關愛早已超越了救助，演變成了深厚的情感。在一個平靜的夜晚，你們決定正式結為夫妻。\\n\\n你們在小城的邊緣買了一間小屋，種植蔬菜、養殖家畜。每一天，你們一起工作，一起歡笑。莉娜不再有恐懼的眼神，取而代之的是對未來的希望。\\n\\n你曾經拯救了她的生命，而她也用愛填滿了你的人生。在這個和平的時代，你們找到了屬於彼此的幸福，與安穩的生活。\\n\\n＝＝＝ 遊戲结束：你這個死戀童癖 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_slavery: {
+                icon: 'spark',
+                text: `你背叛了莉娜的信任，將她賣回給神聖王朝。那筆賞金讓你變得富有，但你的良心再也無法平靜。\\n\\n每個夜晚，你都會看到她驚恐的眼神，聽見她的哭喊聲。你賺取的金錢逐漸失去了意義，因為你已經失去了最珍貴的東西——自己的人性。\\n\\n多年後，你開始後悔這個決定，但為時已晚。莉娜已經永遠消失在你的人生中。\\n\\n＝＝＝ 遊戲结束：背叛帶來的永恆悔恨 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            }
+
+            // 額外場景：神秘神殿與過河
+        };
+
+        // 資源狀態
+        let money = 50;
+        let hunger = 60; // 0-100
+
+        function updateHUD() {
+            const moneyDisplay = document.getElementById('moneyDisplay');
+            const hungerFill = document.getElementById('hungerFill');
+            if (moneyDisplay) moneyDisplay.textContent = `金錢: ${money} ${hasEscort ? '| 護送: 是' : ''} ${weapon ? '| 武器: ' + weapon.name : ''} | 行會好感: ${merchantFavor}`;
+            if (hungerFill) hungerFill.style.width = `${Math.max(0, Math.min(100, hunger))}%`;
+        }
+
+        function showGameOver(message) {
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            storyContent.innerHTML = '';
+            const p = document.createElement('p');
+            p.textContent = message || '遊戲結束';
+            storyContent.appendChild(p);
+            choicesContainer.innerHTML = '';
+            const btn = document.createElement('button');
+            btn.className = 'restart-btn';
+            btn.textContent = '重新開始';
+            btn.onclick = () => restartGame();
+            choicesContainer.appendChild(btn);
+        }
+
+        function resetGameState() {
+            money = 50;
+            hunger = 60;
+            hasEscort = false;
+            pendingNext = null;
+            weapon = null;
+            merchantFavor = 100;
+            banditAlly = false;
+        }
+
+        function restartGame() {
+            resetGameState();
+            updateHUD();
+            renderScene('intro');
+        }
+
+        function chooseRoadEvent() {
+            // 根據 merchantFavor 調整 merchant 事件權重
+            const baseWeights = {
+                bandits: 1,
+                monster: 1,
+                merchant: 1,
+                caravan_bandits: 0.8,
+                caravan_monster: 0.8
+            };
+            const weighted = [];
+            roadEvents.forEach(ev => {
+                let w = baseWeights[ev.id] || 1;
+                if (ev.id === 'merchant') w = w * (merchantFavor / 100);
+                // 如果玩家與土匪為盟友，商人出現機會再降一層
+                if (banditAlly && ev.id === 'merchant') w = w * 0.5;
+                // push ev id w times scaled
+                const count = Math.max(1, Math.round(w * 10));
+                for (let i=0;i<count;i++) weighted.push(ev);
+            });
+            if (weighted.length === 0) return roadEvents[Math.floor(Math.random()*roadEvents.length)];
+            return weighted[Math.floor(Math.random()*weighted.length)];
+        }
+
+        function triggerRoadEvent(nextScene) {
+            // 減少護送時事件發生機率或影響
+            if (hasEscort && Math.random() < 0.8) { renderScene(nextScene); return; }
+            const evt = chooseRoadEvent();
+            pendingNext = nextScene;
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            const sceneIcon = document.getElementById('sceneIcon');
+            if (sceneIcon) sceneIcon.innerHTML = ICON_SVGS[evt.id] || '';
+            storyContent.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            const h = document.createElement('h3'); h.textContent = evt.title; storyContent.appendChild(h);
+            const p = document.createElement('p'); p.textContent = evt.text; storyContent.appendChild(p);
+
+            evt.choices.forEach((c, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn ' + (i%2===0? 'primary':'secondary');
+                const keys = ['star','heart','spark'];
+                btn.innerHTML = (ICON_SVGS[keys[i % keys.length]] || ICON_SVGS.star) + ("<span>"+c.text+"</span>");
+                btn.onclick = () => {
+                    hunger = Math.max(0, hunger - 5);
+                    // apply effect
+                    try { c.effect({ money, hunger }); } catch(e){}
+                    // if effect modified hunger/money by closure, update values by reading back
+                    // we will recalculate conservatively
+                    // apply simple deterministic effects if not changed
+                    // normalize values (some effects modified s.money etc. but JS primitive copy won't change outer vars), so apply again by manual rules
+                    // For safety, do small random defaults when effects didn't change outer vars
+                    // Here instead we simulate effects explicitly so they change outer vars:
+                    // Re-implement effects inline to ensure outer vars update
+                    if (evt.id === 'bandits') {
+                        if (c.text.indexOf('交錢')>=0) { money = Math.max(0, money-20); }
+                        if (c.text.indexOf('反抗')>=0) {
+                            hunger = Math.max(0, hunger-15);
+                            const r = Math.random();
+                            if (r < 0.2) { money = 0; }
+                            else if (r < 0.6) { money += 30; }
+                            else { money = Math.max(0, money-10); }
+                        }
+                        if (c.text.indexOf('加入')>=0 || c.text.indexOf('加入土匪')>=0) {
+                            // 加入土匪：立即小利，但商人好感下降與之後商人事件減少
+                            money += 20;
+                            banditAlly = true;
+                            merchantFavor = Math.max(0, merchantFavor - 30);
+                        }
+                    }
+                    if (evt.id === 'monster') {
+                        if (c.text.indexOf('戰鬥')>=0) {
+                            const base = 0.5 + ((100 - hunger) / 400) + (weapon ? weapon.bonus : 0);
+                            const win = Math.random() < base;
+                            if (win) { money += 40; } else { hunger = Math.max(0, hunger - 20); money = Math.max(0, money - 10); }
+                        }
+                        if (c.text.indexOf('逃跑')>=0) { hunger = Math.max(0,hunger-20); }
+                    }
+                    if (evt.id === 'caravan_bandits' || evt.id === 'caravan_monster') {
+                        if (c.text.indexOf('救援')>=0) { hunger = Math.min(100, hunger + 30); if (evt.id === 'caravan_bandits' && Math.random() < 0.7) money += 25; }
+                        if (c.text.indexOf('視而不見')>=0) { money = Math.max(0,money-5); }
+                    }
+                    if (evt.id === 'merchant') {
+                        // merchant choices: 買食物、短劍、長刀、鋼劍、離開
+                        if (c.text.indexOf('食物')>=0) { if (money >= 15) { money = Math.max(0, money-15); hunger = Math.min(100, hunger+30); } else { alert('金錢不足'); } }
+                        if (c.text.indexOf('短劍')>=0) { if (money >= 40) { money -= 40; weapon = { name: '短劍', bonus: 0.06 }; } else { alert('金錢不足'); } }
+                        if (c.text.indexOf('長刀')>=0) { if (money >= 80) { money -= 80; weapon = { name: '長刀', bonus: 0.14 }; } else { alert('金錢不足'); } }
+                        if (c.text.indexOf('鋼劍')>=0) { if (money >= 140) { money -= 140; weapon = { name: '鋼劍', bonus: 0.22 }; } else { alert('金錢不足'); } }
+                    }
+
+                    updateHUD();
+                    if (hunger <= 0) { showGameOver('莉娜因飢餓無法繼續，遊戲結束。'); return; }
+                    const destination = pendingNext;
+                    pendingNext = null;
+                    renderScene(destination);
+                };
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function handleChoice(choice) {
+            if (choice.next === 'intro') {
+                restartGame();
+                return;
+            }
+            if (choice.requiredMoney && money < choice.requiredMoney) {
+                alert(`需要 ${choice.requiredMoney} 金錢才能完成救援，目前只有 ${money}。`);
+                return;
+            }
+            const deltaMoney = choice.money || 0;
+            if (deltaMoney < 0 && (money + deltaMoney) < 0) { alert('金錢不足。'); return; }
+            // 每次行動消耗飢餓
+            hunger -= 5;
+            if (choice.hunger) hunger += choice.hunger;
+            if (choice.money) money += choice.money;
+            hunger = Math.max(0, Math.min(100, hunger));
+            updateHUD();
+            if (hunger <= 0) { showGameOver('莉娜因飢餓無法繼續，遊戲結束。'); return; }
+
+            // 戰鬥選項
+            if (choice.fight) {
+                // 簡單戰鬥判定：食人族戰鬥勝率依飢餓/武器/隨機改變
+                const base = 0.5 + ((100 - hunger) / 400) + (weapon ? weapon.bonus : 0); // 當飢餓越少或有武器，勝率略升
+                const win = Math.random() < base;
+                if (win) {
+                    // 勝利：節省代價並前往獸人王朝會面
+                    renderScene('orc_presentation');
+                } else {
+                    // 失敗：消耗更多飢餓與金錢，可能回退
+                    hunger = Math.max(0, hunger - 20);
+                    money = Math.max(0, money - 20);
+                    updateHUD();
+                    if (hunger <= 0) { showGameOver('莉娜在戰鬥中受傷過重，無法繼續。'); return; }
+                    renderScene('plan');
+                }
+                return;
+            }
+
+            // 特殊 effect 屬性（像是設定護送）
+            if (typeof choice.effect === 'function') {
+                try { choice.effect(); } catch(e){}
+            }
+
+            if (choice.travel) {
+                triggerRoadEvent(choice.next);
+                return;
+            }
+
+            renderScene(choice.next);
+        }
+
+        function renderScene(sceneName) {
+            const scene = gameStories[sceneName];
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            const sceneIcon = document.getElementById('sceneIcon');
+            storyContent.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            if (sceneIcon) sceneIcon.innerHTML = ICON_SVGS[scene.icon] || '';
+            const paragraphs = scene.text.split('\n\n');
+            paragraphs.forEach(paragraph => { const p = document.createElement('p'); p.textContent = paragraph; storyContent.appendChild(p); });
+
+            // 支持動態選擇
+            let choices = scene.choices;
+            if (typeof scene.choices === 'string') {
+                try {
+                    const fn = new Function('hasEscort', 'return ' + scene.choices);
+                    choices = fn(hasEscort);
+                } catch(e) {
+                    choices = [];
+                }
+            }
+
+            choices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn ' + (idx % 2 === 0 ? 'primary' : 'secondary');
+                const keys = ['star','heart','spark'];
+                const key = keys[idx % keys.length];
+                btn.innerHTML = ICON_SVGS[key] || ICON_SVGS.star;
+                const span = document.createElement('span');
+                span.className = 'choice-text'; span.textContent = choice.text; btn.appendChild(span);
+
+                btn.onclick = () => handleChoice(choice);
+
+                choicesContainer.appendChild(btn);
+            });
+
+            storyContent.scrollTop = 0;
+        }
+
+        // 初始化
+        resetGameState();
+        updateHUD();
+        renderScene('intro');
+    </script>
+</body>
+</html>
