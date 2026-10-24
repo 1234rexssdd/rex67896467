@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        輪迴：破堯前夕的叛逆誓約
+    </title>
+    <style>
+        :root { color-scheme: light; --ink:#26334a; --muted:#71809a; --violet:#6558d3; --violet-dark:#5144bd; --mint:#30a98d; --line:#e7eaf3; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px 18px; color:var(--ink); font-family:'微軟正黑體', 'Noto Sans TC', Arial, sans-serif; background:radial-gradient(ellipse at 15% 10%,rgba(255,255,255,.75),transparent 34%),linear-gradient(135deg,#dce7ff 0%,#eee4ff 52%,#d8f3ed 100%); }
+        button { font:inherit; }
+        .container { position:relative; isolation:isolate; width:min(100%,880px); padding:clamp(22px,4vw,42px); overflow:hidden; border:1px solid rgba(255,255,255,.82); border-radius:28px; background:rgba(255,255,255,.94); box-shadow:0 28px 80px rgba(53,61,105,.18); }
+        .title { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:7px; color:#283552; text-align:center; font-size:clamp(23px,4vw,31px); letter-spacing:.04em; }
+        .title-icon { width:28px; height:28px; flex:none; fill:var(--violet); }
+        .subtitle { margin-bottom:26px; color:var(--muted); text-align:center; font-size:14px; letter-spacing:.08em; }
+        .hud { display:grid; grid-template-columns:minmax(150px,1fr) minmax(190px,1.3fr); gap:12px; margin-bottom:18px; }
+        .money { display:flex; align-items:center; min-height:54px; padding:12px 16px; border:1px solid #ecebfa; border-radius:15px; background:linear-gradient(135deg,#f4f2ff,#faf9ff); color:#4d478f; font-size:14px; font-weight:800; line-height:1.55; }
+        .hunger-card { display:flex; flex-direction:column; justify-content:center; gap:8px; min-width:0; padding:11px 15px; border:1px solid #e5f2ee; border-radius:15px; background:#f5fbf9; }
+        .hunger-heading { display:flex; justify-content:space-between; gap:10px; color:#557568; font-size:12px; font-weight:700; }
+        .hunger { height:10px; overflow:hidden; border-radius:99px; background:#e2ece8; }
+        .hunger-fill { width:40%; height:100%; border-radius:inherit; background:linear-gradient(90deg,#54b99c 0%,#e8c269 58%,#e46f79 100%); transition:width .35s ease; }
+        .hunger-fill.is-critical { box-shadow:0 0 12px rgba(228,111,121,.45); }
+        .journey { position:relative; margin:0 0 22px; padding:17px 20px 15px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(120deg,#fbfcff,#f7f8ff); }
+        .journey-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:17px; }
+        .journey-heading h2 { color:#34415e; font-size:14px; }
+        .journey-heading span { color:#8b93a8; font-size:11px; }
+        .journey-map-scroll { overflow-x:auto; padding:0 2px 7px; scrollbar-color:#d2d2e8 transparent; scrollbar-width:thin; }
+        .journey-steps { position:relative; display:grid; grid-template-columns:repeat(8,minmax(78px,1fr)); min-width:740px; }
+        .journey-rail, .journey-progress { position:absolute; top:13px; left:6.25%; height:3px; border-radius:99px; }
+        .journey-rail { right:6.25%; background:#e1e4ef; }
+        .journey-progress { width:0; background:linear-gradient(90deg,#8b82ec,#42b99b); transition:width .4s ease; }
+        .journey-step { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:7px; color:#9299aa; text-align:center; font-size:11px; transition:color .2s ease; }
+        .journey-dot { display:grid; width:28px; height:28px; place-items:center; border:3px solid #e1e4ef; border-radius:50%; background:#fff; color:#9aa1b1; font-size:11px; font-weight:800; transition:all .25s ease; }
+        .journey-step.is-complete { color:#4d9a88; }
+        .journey-step.is-complete .journey-dot { border-color:#54b99c; background:#54b99c; color:#fff; }
+        .journey-step.is-active { color:#564bc2; font-weight:800; }
+        .journey-step.is-active .journey-dot { transform:scale(1.12); border-color:var(--violet); background:var(--violet); color:white; box-shadow:0 0 0 5px rgba(101,88,211,.12); }
+        .decoration svg { position:absolute; z-index:-1; opacity:.055; pointer-events:none; fill:var(--violet); }
+        .decoration .tl { top:-32px; left:-34px; width:150px; height:150px; }
+        .decoration .br { right:-42px; bottom:-52px; width:210px; height:210px; }
+        .scene-icon { display:flex; align-items:center; justify-content:center; height:78px; margin:0 0 8px; }
+        .scene-icon svg { width:72px; height:72px; fill:#8177e4; filter:drop-shadow(0 8px 12px rgba(101,88,211,.16)); }
+        .story-content { max-height:350px; overflow:auto; margin-bottom:20px; padding:0 5px 2px; color:#46516a; font-size:15px; line-height:1.9; scrollbar-color:#c7c8e8 transparent; scrollbar-width:thin; }
+        .story-content p + p { margin-top:12px; }
+        .story-content h3 { margin-bottom:8px; color:#343f5b; font-size:19px; }
+        .choices { display:grid; grid-template-columns:1fr; gap:10px; }
+        .choice-btn { display:flex; align-items:center; gap:12px; width:100%; min-height:52px; padding:13px 17px; border:1px solid transparent; border-radius:14px; color:#fff; text-align:left; font-weight:700; cursor:pointer; transition:transform .18s ease,box-shadow .18s ease,filter .18s ease; }
+        .choice-btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(57,60,120,.17); filter:saturate(1.08); }
+        .choice-btn:focus-visible, .restart-btn:focus-visible { outline:3px solid #f2bd64; outline-offset:3px; }
+        .choice-btn.primary { background:linear-gradient(110deg,#7064dc,#5f53c9); }
+        .choice-btn.secondary { border-color:#e7e4fb; background:linear-gradient(110deg,#9085df,#8174d3); }
+        .choice-btn:nth-child(3n) { background:linear-gradient(110deg,#42ad9b,#319982); }
+        .choice-btn .icon { width:19px; height:19px; flex:none; fill:currentColor; opacity:.95; }
+        .choice-text { line-height:1.5; }
+        .restart-btn { margin-top:8px; padding:12px 19px; border:0; border-radius:11px; background:var(--violet); color:#fff; font-weight:800; cursor:pointer; }
+        .game-tools { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin:-4px 0 18px; }
+        .utility-button { padding:9px 13px; border:1px solid #e2e2f2; border-radius:10px; background:#fff; color:#5b5499; font-size:13px; font-weight:700; cursor:pointer; }
+        .utility-button:hover { background:#f5f3ff; }
+        .utility-button:focus-visible { outline:3px solid #f2bd64; outline-offset:3px; }
+        .save-status { min-height:18px; margin:-9px 0 12px; color:#6d7b92; text-align:center; font-size:12px; }
+        .achievements { margin:0 0 20px; overflow:hidden; border:1px solid #e8e7f4; border-radius:15px; background:#fbfbff; }
+        .achievements summary { padding:13px 16px; color:#3d4965; font-size:14px; font-weight:800; cursor:pointer; }
+        .achievement-table-wrap { overflow-x:auto; padding:0 12px 12px; }
+        .achievement-table { width:100%; border-collapse:collapse; color:#56627a; font-size:13px; text-align:left; }
+        .achievement-table th, .achievement-table td { padding:9px 8px; border-top:1px solid #ececf4; }
+        .achievement-table th { color:#858da1; font-size:11px; }
+        .achievement-count { color:#5c52c5; font-weight:800; text-align:center; }
+        .library-open { overflow:hidden; }
+        .ending-library { position:fixed; z-index:180; inset:0; display:grid; place-items:center; padding:clamp(12px,4vw,36px); background:rgba(20,27,48,.58); backdrop-filter:blur(9px); animation:cinema-arrive .2s ease both; }
+        .library-panel { display:flex; flex-direction:column; width:min(100%,720px); max-height:min(86vh,780px); overflow:hidden; border:1px solid rgba(255,255,255,.8); border-radius:24px; background:#fff; box-shadow:0 25px 90px rgba(14,20,42,.35); }
+        .library-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:20px 24px; border-bottom:1px solid #ececf4; background:linear-gradient(110deg,#f6f4ff,#f4fbf8); }
+        .library-heading small { display:block; margin-bottom:4px; color:#8179c7; font-size:10px; font-weight:800; letter-spacing:.18em; }
+        .library-heading h2 { color:#2d3955; font-size:21px; }
+        .library-close, .library-back { min-height:40px; padding:9px 13px; border:1px solid #e2e2f0; border-radius:11px; background:#fff; color:#554e91; font-weight:700; cursor:pointer; }
+        .library-close { width:42px; padding:7px; font-size:20px; }
+        .library-close:focus-visible, .library-back:focus-visible, .ending-entry:focus-visible { outline:3px solid #f2bd64; outline-offset:3px; }
+        .library-body { overflow:auto; padding:22px 24px 26px; }
+        .library-summary { margin-bottom:16px; color:#79839a; font-size:13px; line-height:1.65; }
+        .ending-entry-list { display:grid; gap:10px; }
+        .ending-entry { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; padding:15px 17px; border:1px solid #e8e8f2; border-radius:15px; background:linear-gradient(110deg,#fff,#f8f8ff); color:#34415c; text-align:left; cursor:pointer; transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease; }
+        .ending-entry:hover { transform:translateY(-1px); border-color:#c9c4f0; box-shadow:0 8px 20px rgba(74,68,140,.1); }
+        .ending-entry-title { display:block; margin-bottom:4px; font-size:15px; font-weight:800; }
+        .ending-entry-description { display:block; color:#7b8499; font-size:12px; line-height:1.6; }
+        .ending-entry-count { flex:none; padding:7px 10px; border-radius:99px; background:#f0efff; color:#5d53bc; font-size:12px; font-weight:800; }
+        .library-empty { padding:28px 18px; border:1px dashed #d9d9e8; border-radius:15px; color:#7a8499; text-align:center; line-height:1.8; }
+        .ending-detail h3 { margin:0 0 15px; color:#353f5c; font-size:23px; }
+        .ending-detail-copy { color:#4c5871; font-size:15px; line-height:1.9; }
+        .ending-detail-copy p + p { margin-top:13px; }
+        .ending-detail .library-back { margin-top:20px; }
+        .ending-cinematic { --ending-a:#152748; --ending-b:#7f8bbb; --ending-glow:#ffe8ad; position:fixed; z-index:100; inset:0; display:grid; place-items:center; overflow:hidden; padding:24px; color:#fff; background:linear-gradient(165deg,var(--ending-a),var(--ending-b) 68%,#d99e93); animation:cinema-arrive .75s cubic-bezier(.2,.8,.2,1) both; }
+        .cinematic-open { overflow:hidden; }
+        .ending-cinematic.ending-completed { --ending-a:#163d48; --ending-b:#5ca598; --ending-glow:#fff0b9; }
+        .ending-cinematic.ending-reject { --ending-a:#292d51; --ending-b:#9a91bb; --ending-glow:#e7e8ff; }
+        .ending-cinematic.ending-guardian { --ending-a:#54375a; --ending-b:#e39c77; --ending-glow:#ffe1a3; }
+        .ending-cinematic.ending-slavery { --ending-a:#241f34; --ending-b:#704b5d; --ending-glow:#e9a58d; }
+        .ending-cinematic.ending-denied { --ending-a:#293044; --ending-b:#77758b; --ending-glow:#d8d9e8; }
+        .ending-cinematic.ending-completed { background:linear-gradient(160deg,#0e343f 0%,#3f7f78 52%,#e2b883 100%); }
+        .ending-cinematic.ending-reject { background:linear-gradient(160deg,#20294b 0%,#65769a 55%,#d1c5dd 100%); }
+        .ending-cinematic.ending-guardian { background:linear-gradient(160deg,#45345a 0%,#a96e71 52%,#f0c58d 100%); }
+        .ending-cinematic.ending-slavery { background:linear-gradient(160deg,#211e30 0%,#593e52 55%,#9c6259 100%); }
+        .ending-cinematic.ending-denied { background:linear-gradient(160deg,#252c40 0%,#626477 55%,#a69aa1 100%); }
+        .cinema-stars { position:absolute; inset:0; opacity:.7; background-image:radial-gradient(2px 2px at 12% 21%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 77% 18%,#fff 50%,transparent 55%),radial-gradient(2px 2px at 88% 39%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 27% 48%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 61% 11%,#fff 50%,transparent 55%); animation:stars-drift 18s linear infinite; }
+        .cinema-shooting-star { position:absolute; top:16%; left:-12%; width:min(28vw,260px); height:2px; transform:rotate(-22deg); background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent); filter:drop-shadow(0 0 6px #fff); animation:shooting-star 6s 1.3s ease-in both; }
+        .cinema-glow { position:absolute; top:12%; left:50%; width:min(58vw,440px); aspect-ratio:1; transform:translate(-50%,45%); border-radius:50%; background:radial-gradient(circle,var(--ending-glow) 0%,color-mix(in srgb,var(--ending-glow),transparent 48%) 27%,transparent 70%); opacity:.85; animation:glow-rise 8s ease-in-out both; }
+        .cinema-horizon { position:absolute; right:-8%; bottom:10%; left:-8%; height:34%; transform:rotate(-3deg); border-radius:50% 50% 0 0; background:linear-gradient(180deg,color-mix(in srgb,var(--ending-b),#23324d 28%),#26334a); box-shadow:0 -22px 50px color-mix(in srgb,var(--ending-glow),transparent 86%); }
+        .cinema-horizon::before { position:absolute; right:-3%; bottom:48%; left:-3%; height:30%; border-radius:50% 50% 0 0; background:color-mix(in srgb,var(--ending-b),#33405a 32%); content:""; }
+        .cinema-city { position:absolute; z-index:1; right:0; bottom:17%; left:0; height:20%; opacity:.68; background:linear-gradient(90deg,transparent 0 7%,#283650 7% 12%,transparent 12% 16%,#283650 16% 21%,transparent 21% 25%,#283650 25% 31%,transparent 31% 39%,#283650 39% 43%,transparent 43% 49%,#283650 49% 55%,transparent 55% 62%,#283650 62% 68%,transparent 68% 73%,#283650 73% 80%,transparent 80% 86%,#283650 86% 93%,transparent 93%); clip-path:polygon(0 100%,0 42%,7% 42%,7% 17%,12% 17%,12% 53%,17% 53%,17% 28%,22% 28%,22% 55%,28% 55%,28% 0,33% 0,33% 48%,40% 48%,40% 24%,45% 24%,45% 56%,51% 56%,51% 13%,56% 13%,56% 49%,64% 49%,64% 31%,70% 31%,70% 54%,77% 54%,77% 8%,82% 8%,82% 48%,90% 48%,90% 22%,95% 22%,95% 52%,100% 52%,100% 100%); }
+        .cinema-city::after { position:absolute; inset:15% 3% 22%; background-image:radial-gradient(2px 3px at 8% 30%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 19% 55%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 30% 22%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 43% 48%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 55% 25%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 68% 53%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 80% 30%,var(--ending-glow) 50%,transparent 60%),radial-gradient(2px 3px at 92% 45%,var(--ending-glow) 50%,transparent 60%); opacity:.7; content:""; }
+        .cinema-landmark { position:absolute; z-index:1; bottom:17%; left:50%; display:none; transform:translateX(-50%); }
+        .ending-success .cinema-landmark { display:block; width:clamp(118px,20vw,210px); height:clamp(100px,21vh,170px); border:3px solid rgba(255,238,196,.52); border-bottom:0; border-radius:100px 100px 0 0; box-shadow:0 0 55px rgba(255,230,170,.24),inset 0 0 35px rgba(255,236,193,.12); animation:gate-appear 1.4s .2s ease-out both; }
+        .ending-success .cinema-city { opacity:.82; }
+        .ending-completed .cinema-city, .ending-reject .cinema-city, .ending-guardian .cinema-city, .ending-slavery .cinema-city { opacity:.18; }
+        .ending-completed .cinema-landmark { display:block; bottom:16%; width:clamp(150px,24vw,240px); height:clamp(105px,19vh,150px); border:3px solid rgba(255,240,192,.72); border-bottom:0; border-radius:8px 8px 0 0; background:linear-gradient(180deg,rgba(255,225,159,.18),rgba(27,65,66,.2)); box-shadow:0 0 50px rgba(255,220,148,.2); animation:home-arrive 1.2s .25s ease-out both; }
+        .ending-completed .cinema-landmark::before { position:absolute; top:-39px; left:-16px; width:calc(100% + 32px); height:42px; clip-path:polygon(50% 0,100% 100%,0 100%); background:rgba(255,231,177,.72); content:""; }
+        .ending-completed .cinema-landmark::after { position:absolute; bottom:0; left:50%; width:28%; height:56%; transform:translateX(-50%); border:2px solid rgba(255,238,191,.72); border-bottom:0; border-radius:28px 28px 0 0; background:radial-gradient(circle at 50% 32%,#fff4c0 0 4px,transparent 6px),linear-gradient(180deg,rgba(255,223,151,.55),rgba(255,214,145,.14)); box-shadow:0 0 34px rgba(255,228,163,.64); animation:window-glow 2.4s ease-in-out infinite alternate; content:""; }
+        .ending-reject .cinema-landmark { display:block; bottom:24%; left:35%; width:28px; height:42px; transform:rotate(-7deg); border:2px solid rgba(232,242,255,.85); border-radius:10px 10px 13px 13px; background:linear-gradient(180deg,#fff5c7,#d7e7ff 55%,rgba(215,231,255,.3)); box-shadow:0 0 25px 8px rgba(211,231,255,.55); animation:lantern-pass 2.8s ease-in-out both; }
+        .ending-reject .cinema-landmark::before { position:absolute; top:-11px; left:5px; width:14px; height:9px; border:2px solid rgba(232,242,255,.82); border-bottom:0; border-radius:10px 10px 0 0; content:""; }
+        .ending-guardian .cinema-landmark { display:block; bottom:16%; left:72%; width:32px; height:clamp(110px,20vh,165px); transform:none; border-radius:50% 50% 4px 4px; background:linear-gradient(90deg,#403c48,#665044); box-shadow:0 0 22px rgba(255,220,164,.14); }
+        .ending-guardian .cinema-landmark::before { position:absolute; top:-63px; left:-48px; width:128px; height:105px; border-radius:52% 48% 48% 50%; background:radial-gradient(ellipse at 48% 65%,#637e67 0 38%,transparent 40%),radial-gradient(ellipse at 22% 50%,#829674 0 32%,transparent 34%),radial-gradient(ellipse at 74% 47%,#718b70 0 34%,transparent 36%); filter:drop-shadow(0 5px 18px rgba(255,232,185,.24)); content:""; animation:tree-sway 4s ease-in-out infinite alternate; }
+        .ending-slavery .cinema-landmark { display:block; right:-12%; bottom:35%; left:-12%; width:auto; height:3px; transform:rotate(-18deg); background:linear-gradient(90deg,transparent 0%,rgba(233,155,131,.1) 22%,#f0a28a 48%,rgba(233,155,131,.36) 52%,transparent 80%); box-shadow:0 0 24px rgba(233,155,131,.58); animation:rift-flicker 2.1s ease-in-out infinite alternate; }
+        .ending-slavery .cinema-glow { opacity:.3; }
+        .ending-reject .cinema-figure.friend { animation:handoff-move 2.8s .2s ease-in-out both; }
+        .ending-reject .cinema-figure.lina { animation-delay:.16s; }
+        .ending-guardian .cinema-figure { animation:figure-arrive 1.2s cubic-bezier(.2,.8,.2,1) both,settle-breathe 3.8s 1.2s ease-in-out infinite; }
+        .ending-slavery .cinema-figure.friend { transform:translateX(35px); opacity:.5; }
+        .cinema-figures { position:absolute; z-index:2; bottom:11%; left:50%; display:flex; align-items:flex-end; gap:clamp(17px,4vw,42px); transform:translateX(-50%); }
+        .cinema-figure { position:relative; width:clamp(42px,6vw,60px); height:clamp(100px,19vh,156px); transform-origin:bottom; background:none; filter:drop-shadow(0 8px 16px rgba(12,18,36,.23)); animation:figure-arrive 1.2s cubic-bezier(.2,.8,.2,1) both; }
+        .cinema-figure::before { position:absolute; z-index:2; top:-24px; left:50%; width:clamp(23px,3.8vw,32px); aspect-ratio:1; transform:translateX(-50%); border-radius:50%; background:#e7c3ad; box-shadow:0 0 15px rgba(255,230,200,.18); content:""; }
+        .cinema-figure::after { position:absolute; inset:0; clip-path:polygon(38% 0,62% 0,68% 12%,80% 22%,100% 62%,88% 66%,74% 42%,68% 58%,77% 100%,56% 100%,50% 66%,44% 100%,23% 100%,32% 58%,26% 42%,12% 66%,0 62%,20% 22%,32% 12%); background:linear-gradient(90deg,#1b253b 0%,#2b3650 64%,#36425b 100%); content:""; }
+        .cinema-figure.lina { height:clamp(86px,16vh,132px); animation-delay:.16s; }
+        .cinema-figure.lina::after { clip-path:polygon(38% 0,62% 0,68% 12%,80% 22%,100% 100%,0 100%,20% 22%,32% 12%); background:linear-gradient(90deg,#473b61,#665879 65%,#78698a); }
+        .cinema-figure.lina::before { background:#f0cbb5; }
+        .cinema-figure.friend { display:none; }
+        .ending-reject .cinema-figure.friend, .ending-slavery .cinema-figure.friend { display:block; }
+        .ending-reject .cinema-figure.lina { transform:translateX(-8px); }
+        .ending-slavery .cinema-figure.lina { transform:translateX(-24px); animation:figure-withdraw 2s ease-in-out both; }
+        .ending-slavery .cinema-figure.friend { transform:translateX(24px); opacity:.65; }
+        .cinema-sparkles { position:absolute; z-index:3; inset:0; pointer-events:none; }
+        .cinema-sparkles i { position:absolute; bottom:8%; left:var(--x); width:5px; height:5px; border-radius:50%; background:var(--ending-glow); box-shadow:0 0 16px 4px color-mix(in srgb,var(--ending-glow),transparent 35%); opacity:0; animation:particle-rise 3.4s ease-out var(--delay) infinite; }
+        .cinema-sparkles i:nth-child(1) { --x:18%; --delay:.2s; }
+        .cinema-sparkles i:nth-child(2) { --x:33%; --delay:1.1s; }
+        .cinema-sparkles i:nth-child(3) { --x:66%; --delay:.7s; }
+        .cinema-sparkles i:nth-child(4) { --x:82%; --delay:1.6s; }
+        .ending-slavery .cinema-sparkles i { background:#e99b83; box-shadow:0 0 14px 3px rgba(233,155,131,.42); }
+        .cinema-copy { position:relative; z-index:4; width:min(100%,620px); margin-top:-32vh; text-align:center; animation:copy-reveal 1.2s .3s both; }
+        .cinema-overline { display:inline-block; margin-bottom:14px; padding:7px 11px; border:1px solid rgba(255,255,255,.28); border-radius:99px; background:rgba(255,255,255,.1); color:#fff1ce; font-size:11px; font-weight:800; letter-spacing:.22em; backdrop-filter:blur(8px); }
+        .cinema-copy h2 { margin-bottom:10px; color:#fff; font-size:clamp(30px,6vw,54px); letter-spacing:.08em; text-shadow:0 5px 24px rgba(15,20,42,.3); }
+        .cinema-copy p { max-width:470px; margin:0 auto; color:rgba(255,255,255,.88); font-size:clamp(14px,2vw,17px); line-height:1.85; text-shadow:0 2px 10px rgba(15,20,42,.3); }
+        .cinema-dismiss { position:absolute; z-index:5; right:22px; bottom:22px; padding:11px 16px; border:1px solid rgba(255,255,255,.55); border-radius:12px; background:rgba(24,32,56,.25); color:#fff; font-weight:700; cursor:pointer; backdrop-filter:blur(10px); transition:background .2s ease,transform .2s ease; }
+        .cinema-dismiss:hover { transform:translateY(-2px); background:rgba(24,32,56,.48); }
+        .cinema-dismiss:focus-visible { outline:3px solid #ffe7a8; outline-offset:3px; }
+        [hidden] { display:none !important; }
+        .start-screen { position:fixed; z-index:20; inset:0; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:clamp(24px,6vw,62px); background:radial-gradient(ellipse at 50% 5%,rgba(255,255,255,.95),transparent 55%),linear-gradient(145deg,#f2efff,#e9f7f3 90%); }
+        .welcome-screen, .opening-screen { width:min(100%,610px); text-align:center; }
+        .start-kicker { margin-bottom:12px; color:#7d75c9; font-size:12px; font-weight:800; letter-spacing:.2em; }
+        .start-title { margin-bottom:10px; color:#293552; font-size:clamp(30px,6vw,48px); letter-spacing:.04em; }
+        .start-copy { max-width:430px; margin:0 auto 25px; color:#68758e; font-size:15px; line-height:1.9; }
+        .cover-art { position:relative; display:grid; height:230px; place-items:center; margin:0 auto 25px; overflow:hidden; border:1px solid rgba(255,255,255,.8); border-radius:24px; background:linear-gradient(180deg,#8189c8 0%,#b7b4dc 48%,#efdbcc 100%); box-shadow:inset 0 -55px 70px rgba(64,62,117,.1),0 15px 35px rgba(75,80,130,.12); }
+        .cover-art::before, .cover-art::after { position:absolute; right:-8%; left:-8%; border-radius:50% 50% 0 0; content:""; }
+        .cover-art::before { bottom:15%; height:35%; background:#777fae; }
+        .cover-art::after { bottom:-24%; height:43%; background:#65769a; }
+        .cover-star { position:absolute; top:28px; left:14%; color:#fff4d3; font-size:23px; animation:star-glow 2.4s ease-in-out infinite alternate; }
+        .cover-moon, .scene-moon { position:absolute; top:23px; right:15%; width:42px; height:42px; border-radius:50%; background:#fff1cd; box-shadow:0 0 28px rgba(255,241,205,.7); }
+        .cover-figure { position:absolute; z-index:1; bottom:22%; width:36px; height:67px; border-radius:22px 22px 11px 11px; background:#494c76; }
+        .cover-figure::before, .cutscene-person::before { position:absolute; top:-23px; left:5px; width:27px; height:27px; border-radius:50%; background:#f3c6ae; content:""; }
+        .cover-figure.friend { left:42%; transform:scale(1.14); background:#4c5675; }
+        .cover-figure.lina { left:54%; bottom:19%; transform:scale(.82); background:#766391; }
+        .cover-figure.pursuer { right:25%; bottom:24%; transform:scale(.8); background:#4f536f; opacity:.78; }
+        .cover-label { position:absolute; z-index:2; right:0; bottom:15px; left:0; color:rgba(255,255,255,.9); font-size:11px; letter-spacing:.18em; }
+        .start-button { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-width:200px; min-height:54px; padding:13px 24px; border:0; border-radius:15px; background:linear-gradient(110deg,#7064dc,#5f53c9); box-shadow:0 10px 22px rgba(97,83,201,.24); color:#fff; font-weight:800; cursor:pointer; transition:transform .18s ease,box-shadow .18s ease; }
+        .start-button:hover { transform:translateY(-2px); box-shadow:0 13px 26px rgba(97,83,201,.3); }
+        .start-button:focus-visible, .skip-button:focus-visible { outline:3px solid #f2bd64; outline-offset:4px; }
+        .opening-screen { animation:fade-in .55s ease both; }
+        .opening-screen h2 { margin-bottom:7px; color:#2e3b57; font-size:23px; }
+        .opening-hint { margin-bottom:17px; color:#7a8499; font-size:13px; }
+        .cutscene { position:relative; height:260px; overflow:hidden; border:1px solid rgba(255,255,255,.8); border-radius:22px; background:linear-gradient(180deg,#252d55 0%,#6a6f9d 58%,#d3af9f 100%); box-shadow:0 16px 36px rgba(40,46,87,.2); }
+        .cutscene::before { position:absolute; right:-15%; bottom:-32%; left:-15%; height:70%; transform:rotate(-5deg); border-radius:50% 50% 0 0; background:#414b70; content:""; }
+        .cutscene::after { position:absolute; z-index:3; inset:0; background:linear-gradient(115deg,transparent 40%,rgba(255,238,194,.18) 51%,transparent 62%); content:""; animation:light-sweep 8s ease-in-out both; pointer-events:none; }
+        .scene-star { position:absolute; top:33px; left:18%; color:#fff3d5; font-size:18px; }
+        .cutscene-person { position:absolute; z-index:2; bottom:20%; width:34px; height:66px; border-radius:20px 20px 10px 10px; background:#333952; }
+        .cutscene-person::before { left:5px; width:25px; height:25px; }
+        .cutscene-lina { left:20%; transform:scale(.83); background:#827096; animation:run-to-safety 8s cubic-bezier(.4,0,.2,1) both; }
+        .cutscene-friend { left:48%; background:#495573; opacity:0; animation:friend-arrives 8s ease both; }
+        .cutscene-pursuer { right:18%; transform:scale(.8); background:#41445e; opacity:.85; animation:pursuers-fade 8s ease both; }
+        .rescue-glow { position:absolute; z-index:1; top:22%; left:43%; width:90px; height:90px; border-radius:50%; background:radial-gradient(circle,rgba(255,241,194,.8),rgba(255,241,194,0)); opacity:0; animation:rescue-light 8s ease both; }
+        .cutscene-caption { position:absolute; z-index:4; right:12px; bottom:13px; left:12px; color:#fff; text-shadow:0 2px 8px #252d55; font-size:14px; font-weight:700; line-height:1.6; }
+        .opening-actions { display:flex; justify-content:center; margin-top:20px; }
+        .skip-button { padding:10px 15px; border:1px solid #dedcf3; border-radius:11px; background:rgba(255,255,255,.78); color:#635bb0; font-weight:700; cursor:pointer; }
+        @keyframes star-glow { from { opacity:.55; transform:scale(.9); } to { opacity:1; transform:scale(1.12); } }
+        @keyframes fade-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes run-to-safety { 0%,17% { left:20%; } 48%,100% { left:42%; } }
+        @keyframes friend-arrives { 0%,28% { opacity:0; transform:translateX(28px); } 42%,100% { opacity:1; transform:translateX(0); } }
+        @keyframes pursuers-fade { 0%,42% { opacity:.85; } 61%,100% { opacity:.12; } }
+        @keyframes rescue-light { 0%,37% { opacity:0; transform:scale(.65); } 52%,72% { opacity:1; transform:scale(1.4); } 100% { opacity:.38; transform:scale(1.8); } }
+        @keyframes light-sweep { 0% { transform:translateX(-90%); opacity:0; } 40% { opacity:1; } 70% { transform:translateX(90%); opacity:.7; } 100% { transform:translateX(110%); opacity:0; } }
+        @keyframes cinema-arrive { from { opacity:0; } to { opacity:1; } }
+        @keyframes stars-drift { from { transform:translateY(0); } to { transform:translateY(-16px); } }
+        @keyframes glow-rise { 0% { transform:translate(-50%,70%) scale(.72); opacity:0; } 34% { opacity:.9; } 100% { transform:translate(-50%,16%) scale(1); opacity:.83; } }
+        @keyframes figure-arrive { from { opacity:0; transform:translateY(30px) scale(.92); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes figure-withdraw { 0%,25% { opacity:1; transform:translateX(-24px); } 100% { opacity:.38; transform:translateX(-44px); } }
+        @keyframes particle-rise { 0% { opacity:0; transform:translateY(0) scale(.5); } 18% { opacity:.85; } 100% { opacity:0; transform:translateY(-170px) scale(1.4); } }
+        @keyframes copy-reveal { from { opacity:0; transform:translateY(18px); filter:blur(5px); } to { opacity:1; transform:translateY(0); filter:blur(0); } }
+        @keyframes shooting-star { 0% { transform:translate(0,0) rotate(-22deg); opacity:0; } 12% { opacity:.9; } 48% { transform:translate(150vw,46vh) rotate(-22deg); opacity:0; } 100% { transform:translate(150vw,46vh) rotate(-22deg); opacity:0; } }
+        @keyframes gate-appear { from { opacity:0; transform:translate(-50%,20px) scale(.9); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
+        @keyframes home-arrive { from { opacity:0; transform:translate(-50%,16px) scale(.94); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
+        @keyframes window-glow { from { filter:brightness(.78); box-shadow:0 0 18px rgba(255,228,163,.3); } to { filter:brightness(1.3); box-shadow:0 0 42px rgba(255,228,163,.85); } }
+        @keyframes lantern-pass { 0% { left:35%; filter:brightness(.65); } 54% { left:47%; filter:brightness(1.2); } 100% { left:47%; filter:brightness(1); } }
+        @keyframes handoff-move { 0%,20% { opacity:.45; transform:translateX(28px); } 72%,100% { opacity:1; transform:translateX(4px); } }
+        @keyframes tree-sway { from { transform:rotate(-2deg); } to { transform:rotate(2deg); } }
+        @keyframes settle-breathe { 0%,100% { translate:0 0; } 50% { translate:0 -4px; } }
+        @keyframes rift-flicker { from { opacity:.45; filter:brightness(.7); } to { opacity:1; filter:brightness(1.25); } }
+        @media (max-width:560px) {
+            body { align-items:flex-start; padding:14px 10px; }
+            .container { padding:22px 16px; border-radius:21px; }
+            .hud { grid-template-columns:1fr; gap:9px; }
+            .journey { padding:15px 10px 13px; }
+            .journey-heading { padding:0 5px; }
+            .journey-map-scroll { margin:0 -2px; }
+            .journey-step { font-size:10px; }
+            .story-content { max-height:42vh; font-size:14px; }
+            .choice-btn { min-height:50px; padding:12px 14px; }
+            .start-screen { padding:22px 18px; }
+            .cover-art { height:195px; }
+            .cutscene { height:225px; }
+            .cutscene-caption { font-size:12px; }
+            .cinema-copy { margin-top:-26vh; }
+            .cinema-dismiss { right:14px; bottom:14px; }
+        }
+        @media (prefers-reduced-motion:reduce) { *, *::before, *::after { scroll-behavior:auto !important; transition:none !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="start-screen" id="startScreen" aria-label="開始遊戲">
+            <section class="welcome-screen" id="welcomeScreen">
+                <p class="start-kicker">A JOURNEY TO FREEDOM</p>
+                <h1 class="start-title">輪迴：破堯前夕的叛逆誓約</h1>
+                <p class="start-copy">一段關於勇氣、信任與選擇的旅程。陪莉娜離開危險，找到能安心生活的地方。</p>
+                <div class="cover-art" aria-hidden="true"><span class="cover-star">✦</span><span class="cover-moon"></span><span class="cover-figure pursuer"></span><span class="cover-figure friend"></span><span class="cover-figure lina"></span><span class="cover-label">一個承諾，改變一段旅程</span></div>
+                <button class="start-button" id="beginOpening" type="button">開始故事 <span aria-hidden="true">→</span></button>
+                <div class="opening-actions"><button class="utility-button" id="viewEndingsFromStart" type="button">已解鎖結局</button><button class="utility-button" id="loadFromStart" type="button" hidden>讀取上次進度</button></div>
+            </section>
+            <section class="opening-screen" id="openingScreen" aria-live="polite" hidden>
+                <p class="start-kicker">PROLOGUE</p><h2>那一夜，追兵逼近</h2><p class="opening-hint">開場動畫播放中，你可以隨時略過。</p>
+                <div class="cutscene" role="img" aria-label="莉娜逃離追兵，朋友出手救下她，並託付給玩家。">
+                    <span class="scene-moon"></span><span class="scene-star">✦</span><span class="cutscene-person cutscene-pursuer"></span><span class="cutscene-person cutscene-lina"></span><span class="rescue-glow"></span><span class="cutscene-person cutscene-friend"></span>
+                    <p class="cutscene-caption" id="openingCaption">追兵的腳步聲在夜色中逼近，莉娜只能不停奔跑。</p>
+                </div>
+                <div class="opening-actions"><button class="skip-button" id="skipOpening" type="button">略過動畫，開始旅程</button></div>
+            </section>
+        </section>
+        <main class="game-content" id="gameContent" hidden>
+        <h1 class="title"><svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 14.8 9.2 22 12l-7.2 2.8L12 22l-2.8-7.2L2 12l7.2-2.8L12 2z"/></svg>輪迴：破堯前夕的叛逆誓約</h1>
+        <p class="subtitle">做出選擇，陪她找到安全與自由</p>
+        <div class="game-tools" aria-label="進度控制">
+            <button class="utility-button" id="saveButton" type="button">儲存進度</button>
+            <button class="utility-button" id="loadButton" type="button">讀取進度</button>
+            <button class="utility-button" id="viewEndingsButton" type="button">已解鎖結局</button>
+        </div>
+        <p class="save-status" id="saveStatus" role="status" aria-live="polite"></p>
+        <div class="hud">
+            <div class="money" id="moneyDisplay">金錢: 50</div>
+            <div class="hunger-card">
+                <div class="hunger-heading"><span>莉娜飢餓度</span><span id="hungerValue">40%</span></div>
+                <div class="hunger" role="progressbar" aria-label="莉娜飢餓度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"><div id="hungerFill" class="hunger-fill"></div></div>
+            </div>
+        </div>
+        <details class="achievements" id="achievementPanel">
+            <summary>成就收藏・結局紀錄 <span id="achievementTotal">0</span></summary>
+            <div class="achievement-table-wrap">
+                <table class="achievement-table">
+                    <thead><tr><th scope="col">結局成就</th><th scope="col" style="text-align:center">獲得次數</th></tr></thead>
+                    <tbody id="achievementRows"></tbody>
+                </table>
+            </div>
+        </details>
+        <section class="journey" aria-label="旅程進度">
+                    <div class="journey-heading"><h2>旅程簡圖</h2><span id="journeyCaption">第 1 站・聖國立斐爾斯</span></div>
+            <div class="journey-map-scroll" aria-label="可左右滑動查看完整旅程">
+                <div class="journey-steps" id="journeySteps">
+                    <div class="journey-rail" aria-hidden="true"></div><div class="journey-progress" id="journeyProgress" aria-hidden="true"></div>
+                    <div class="journey-step is-active" data-stage="0"><span class="journey-dot">1</span><span>聖國立斐爾斯</span></div>
+                    <div class="journey-step" data-stage="1"><span class="journey-dot">2</span><span>救援準備</span></div>
+                    <div class="journey-step" data-stage="2"><span class="journey-dot">3</span><span>王朝邊境</span></div>
+                    <div class="journey-step" data-stage="3"><span class="journey-dot">4</span><span>食人族荒林</span></div>
+                    <div class="journey-step" data-stage="4"><span class="journey-dot">5</span><span>獸人與矮人</span></div>
+                    <div class="journey-step" data-stage="5"><span class="journey-dot">6</span><span>極地雪山</span></div>
+                    <div class="journey-step" data-stage="6"><span class="journey-dot">7</span><span>自由國度邊境</span></div>
+                    <div class="journey-step" data-stage="7"><span class="journey-dot">8</span><span>自由國度・奧莉安特</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="decoration">
+            <svg class="tl" viewBox="0 0 100 100"><path d="M50 5 L61 39 H97 L67 59 L79 93 L50 73 L21 93 L33 59 L3 39 H39z"/></svg>
+            <svg class="br" viewBox="0 0 100 100"><circle cx="30" cy="30" r="28"/></svg>
+        </div>
+        <div id="sceneIcon" class="scene-icon"></div>
+        <div class="story-content" id="storyContent"></div>
+        <div class="choices" id="choicesContainer"></div>
+        </main>
+    </div>
+    <section class="ending-library" id="endingLibrary" role="dialog" aria-modal="true" aria-labelledby="libraryTitle" hidden>
+        <div class="library-panel">
+            <header class="library-header">
+                <div class="library-heading"><small>STORY ARCHIVE</small><h2 id="libraryTitle">結局收藏</h2></div>
+                <button class="library-close" id="closeEndingLibrary" type="button" aria-label="關閉結局收藏">×</button>
+            </header>
+            <div class="library-body">
+                <p class="library-summary" id="librarySummary"></p>
+                <div class="ending-entry-list" id="endingEntryList"></div>
+                <section class="ending-detail" id="endingDetail" hidden>
+                    <h3 id="endingDetailTitle"></h3>
+                    <div class="ending-detail-copy" id="endingDetailCopy"></div>
+                    <button class="library-back" id="backToEndingList" type="button">← 返回結局收藏</button>
+                </section>
+            </div>
+        </div>
+    </section>
+    <script>
+        const ICON_SVGS = {
+            star: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3L5.8 20l1-6.1L2 9.2l6.2-.9L12 3l3.8 5.3 6.2.9-4.8 4.7L18.2 20z"/></svg>',
+            heart: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.35-9-7.5C1.5 10 4 6 8 6c2 0 3 1 4 1s2-1 4-1c4 0 6.5 4 5 7.5C19 16.65 12 21 12 21z"/></svg>',
+            spark: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>',
+            border: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg>',
+            cannibal: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2 4 4 .5-3 2 1 4-4-2-4 2 1-4-3-2L10 6z"/></svg>',
+            orc: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-8 4 4 4-4 4 8H4z"/></svg>',
+            bandits: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6h6l-5 4 2 6-6-3-6 3 2-6-5-4h6z"/></svg>',
+            monster: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 0 5 2 5 5 0 3-2 5-5 5s-5-2-5-5c0-3 2-5 5-5zM4 20c2-4 6-6 8-6s6 2 8 6H4z"/></svg>',
+            caravan: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h14v6H2zM20 8h2v10h-2zM16 6h2v12h-2z"/></svg>',
+            caravan_bandits: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6h6l-5 4 2 6-6-3-6 3 2-6-5-4h6z"/></svg>',
+            caravan_monster: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 0 5 2 5 5 0 3-2 5-5 5s-5-2-5-5c0-3 2-5 5-5zM4 20c2-4 6-6 8-6s6 2 8 6H4z"/></svg>',
+            merchant: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v2H3zM5 10h14v8H5zM8 12v4h2v-4z"/></svg>',
+            shrine: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 6h-3v7h-8V9H5z"/></svg>',
+            river: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6c6 6 6-6 12 0s6-6 12 0"/></svg>',
+            smuggler: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v4H3zM6 11h12v10H6z"/></svg>',
+            checkpoint: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h20v2H2zM7 11h10v10H7z"/></svg>',
+            home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 7h-3v8h-10v-8H4z"/></svg>',
+            storm: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.5-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9H7zm1-5-2 4h3l-1 3 4-5h-3l1-2H8z"/></svg>',
+            traveler: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 9a7 7 0 0 1 14 0H5zm13-12 1.5 1 1.5-1-.5 2 1.5 1.2-2 .1-.5 1.9-.8-1.8-2-.1 1.5-1.3-.2-2z"/></svg>'
+        };
+
+        // 新增變數
+        let hasEscort = false;
+        let safeRoute = false;
+        let pendingNext = null;
+        let weapon = null; // { name:'短劍', bonus:0.06 }
+        let merchantFavor = 0; // 商人行會好感 0-100，初始沒有折扣
+        let banditAlly = false;
+        let travelReturnScene = 'border';
+        let combatPotionBonus = 0;
+        const SAVE_KEY = 'linaFreedomJourney.save.v1';
+        const ACHIEVEMENT_KEY = 'linaFreedomJourney.achievements.v1';
+        const ENDING_ACHIEVEMENTS = [
+            { id: 'ending_success_free', title: '自由新生', description: '護送莉娜進入自由國度奧莉安特。' },
+            { id: 'ending_orliant_denied', title: '城門之外', description: '奧莉安特入境審查未獲批准，旅程止於自由國度邊境。' },
+            { id: 'ending_completed', title: '救援計畫完成', description: '以充分準備為莉娜安排安全的新生活。' },
+            { id: 'ending_reject', title: '求助與合作', description: '把救援交由可信任的援助者接手。' },
+            { id: 'ending_guardian', title: '守護與新生', description: '成為莉娜可靠的監護人，陪她安心長大。' },
+            { id: 'ending_slavery', title: '背信的代價', description: '做出背叛莉娜的選擇，承擔其後果。' }
+        ];
+        let achievementCounts = Object.fromEntries(ENDING_ACHIEVEMENTS.map(achievement => [achievement.id, 0]));
+        let currentSceneName = 'intro';
+        let currentRoadEventId = null;
+        let gameStarted = false;
+        let gameOverMessage = '';
+        let endingTimer = null;
+
+        function loadAchievementCounts() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(ACHIEVEMENT_KEY) || '{}');
+                ENDING_ACHIEVEMENTS.forEach(({ id }) => {
+                    const count = Number(stored[id]);
+                    achievementCounts[id] = Number.isSafeInteger(count) && count >= 0 ? count : 0;
+                });
+            } catch (error) {
+                achievementCounts = Object.fromEntries(ENDING_ACHIEVEMENTS.map(achievement => [achievement.id, 0]));
+            }
+        }
+
+        function renderAchievements() {
+            const rows = document.getElementById('achievementRows');
+            const total = document.getElementById('achievementTotal');
+            if (!rows || !total) return;
+            rows.replaceChildren();
+            let totalEarned = 0;
+            ENDING_ACHIEVEMENTS.forEach(achievement => {
+                const row = document.createElement('tr');
+                const titleCell = document.createElement('td');
+                const countCell = document.createElement('td');
+                titleCell.textContent = `${achievement.title} — ${achievement.description}`;
+                countCell.className = 'achievement-count';
+                countCell.textContent = String(achievementCounts[achievement.id] || 0);
+                row.append(titleCell, countCell);
+                rows.appendChild(row);
+                totalEarned += achievementCounts[achievement.id] || 0;
+            });
+            total.textContent = `（累計 ${totalEarned} 次）`;
+            updateEndingLibraryButtons();
+        }
+
+        function updateEndingLibraryButtons() {
+            const unlocked = ENDING_ACHIEVEMENTS.filter(achievement => (achievementCounts[achievement.id] || 0) > 0).length;
+            ['viewEndingsFromStart', 'viewEndingsButton'].forEach(id => {
+                const button = document.getElementById(id);
+                if (button) button.textContent = `已解鎖結局 ${unlocked}/${ENDING_ACHIEVEMENTS.length}`;
+            });
+        }
+
+        function renderEndingLibrary() {
+            const list = document.getElementById('endingEntryList');
+            const summary = document.getElementById('librarySummary');
+            const unlocked = ENDING_ACHIEVEMENTS.filter(achievement => (achievementCounts[achievement.id] || 0) > 0);
+            summary.textContent = unlocked.length
+                ? `已解鎖 ${unlocked.length} / ${ENDING_ACHIEVEMENTS.length} 個結局。點選任一項可隨時重讀故事，不會影響目前進度。`
+                : '目前尚未解鎖結局。完成任一結局後，就能在這裡隨時重讀故事。';
+            list.replaceChildren();
+            if (!unlocked.length) {
+                const empty = document.createElement('p');
+                empty.className = 'library-empty';
+                empty.textContent = '第一個結局正在等待你探索。完成故事後，解鎖的結局會收藏在這裡。';
+                list.appendChild(empty);
+                return;
+            }
+            unlocked.forEach(achievement => {
+                const entry = document.createElement('button');
+                entry.className = 'ending-entry';
+                entry.type = 'button';
+                const text = document.createElement('span');
+                const title = document.createElement('span');
+                const description = document.createElement('span');
+                const count = document.createElement('span');
+                title.className = 'ending-entry-title';
+                title.textContent = achievement.title;
+                description.className = 'ending-entry-description';
+                description.textContent = achievement.description;
+                text.append(title, description);
+                count.className = 'ending-entry-count';
+                count.textContent = `獲得 ${achievementCounts[achievement.id]} 次`;
+                entry.append(text, count);
+                entry.addEventListener('click', () => showEndingLibraryDetail(achievement.id));
+                list.appendChild(entry);
+            });
+        }
+
+        function showEndingLibraryDetail(endingId) {
+            const achievement = ENDING_ACHIEVEMENTS.find(item => item.id === endingId);
+            const ending = gameStories[endingId];
+            if (!achievement || !ending || !(achievementCounts[endingId] > 0)) return;
+            document.getElementById('endingDetailTitle').textContent = achievement.title;
+            const copy = document.getElementById('endingDetailCopy');
+            copy.replaceChildren();
+            ending.text.split('\n\n').forEach(paragraph => {
+                const p = document.createElement('p');
+                p.textContent = paragraph;
+                copy.appendChild(p);
+            });
+            document.getElementById('endingEntryList').hidden = true;
+            document.getElementById('endingDetail').hidden = false;
+            document.getElementById('backToEndingList').focus({ preventScroll: true });
+        }
+
+        function openEndingLibrary() {
+            const library = document.getElementById('endingLibrary');
+            if (!library) return;
+            libraryReturnFocus = document.activeElement;
+            renderEndingLibrary();
+            document.getElementById('endingEntryList').hidden = false;
+            document.getElementById('endingDetail').hidden = true;
+            library.hidden = false;
+            document.documentElement.classList.add('library-open');
+            document.getElementById('closeEndingLibrary').focus({ preventScroll: true });
+        }
+
+        function closeEndingLibrary() {
+            document.getElementById('endingLibrary').hidden = true;
+            document.documentElement.classList.remove('library-open');
+            if (libraryReturnFocus && typeof libraryReturnFocus.focus === 'function') libraryReturnFocus.focus({ preventScroll: true });
+        }
+
+        function setSaveStatus(message, isError = false) {
+            const status = document.getElementById('saveStatus');
+            if (!status) return;
+            status.textContent = message;
+            status.style.color = isError ? '#b44a5a' : '';
+        }
+
+        function saveProgress() {
+            if (!gameStarted) {
+                setSaveStatus('開始旅程後即可儲存進度。', true);
+                return false;
+            }
+            const saveData = {
+                version: 1,
+                savedAt: new Date().toISOString(),
+                currentSceneName,
+                currentRoadEventId,
+                pendingNext,
+                travelReturnScene,
+                money,
+                hunger,
+                hasEscort,
+                safeRoute,
+                weapon,
+                combatPotionBonus,
+                merchantFavor,
+                banditAlly,
+                gameOverMessage
+            };
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+                localStorage.setItem(ACHIEVEMENT_KEY, JSON.stringify(achievementCounts));
+                setSaveStatus(`進度已儲存・${new Date().toLocaleTimeString()}`);
+                updateLoadButtons();
+                return true;
+            } catch (error) {
+                setSaveStatus('無法寫入瀏覽器儲存空間，請檢查隱私設定或儲存空間。', true);
+                return false;
+            }
+        }
+
+        function updateLoadButtons() {
+            let hasSave = false;
+            try { hasSave = Boolean(localStorage.getItem(SAVE_KEY)); } catch (error) { /* 儲存空間可能被瀏覽器封鎖 */ }
+            const startButton = document.getElementById('loadFromStart');
+            if (startButton) startButton.hidden = !hasSave;
+            return hasSave;
+        }
+
+        function recordEndingAchievement(endingId) {
+            if (!ENDING_ACHIEVEMENTS.some(achievement => achievement.id === endingId)) return;
+            achievementCounts[endingId] = (achievementCounts[endingId] || 0) + 1;
+            renderAchievements();
+            try { localStorage.setItem(ACHIEVEMENT_KEY, JSON.stringify(achievementCounts)); } catch (error) { /* 當次遊戲仍保留在記憶體 */ }
+            setSaveStatus(`獲得結局成就「${ENDING_ACHIEVEMENTS.find(achievement => achievement.id === endingId).title}」！`);
+        }
+
+        function loadSavedGame() {
+            let saveData;
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) {
+                    setSaveStatus('找不到已儲存的進度。', true);
+                    return false;
+                }
+                saveData = JSON.parse(raw);
+            } catch (error) {
+                setSaveStatus('存檔無法讀取，可能已損毀或瀏覽器停用儲存功能。', true);
+                return false;
+            }
+            if (!saveData || typeof saveData !== 'object' || Array.isArray(saveData)) {
+                setSaveStatus('存檔格式不正確，請重新開始。', true);
+                return false;
+            }
+            const validScene = typeof saveData.currentSceneName === 'string' && Boolean(gameStories[saveData.currentSceneName]);
+            const validEvent = saveData.currentRoadEventId == null || roadEvents.some(event => event.id === saveData.currentRoadEventId);
+            if (saveData.version !== 1 || !validScene || !validEvent || !Number.isFinite(saveData.money) || !Number.isFinite(saveData.hunger)) {
+                setSaveStatus('存檔版本不相容或資料不完整，請重新開始。', true);
+                return false;
+            }
+            currentSceneName = saveData.currentSceneName;
+            currentRoadEventId = saveData.currentRoadEventId || null;
+            pendingNext = typeof saveData.pendingNext === 'string' && gameStories[saveData.pendingNext] ? saveData.pendingNext : null;
+            travelReturnScene = typeof saveData.travelReturnScene === 'string' && gameStories[saveData.travelReturnScene] ? saveData.travelReturnScene : 'border';
+            money = Math.max(0, Math.floor(saveData.money));
+            hunger = Math.max(0, Math.min(100, saveData.hunger));
+            hasEscort = Boolean(saveData.hasEscort);
+            safeRoute = Boolean(saveData.safeRoute);
+            weapon = saveData.weapon && typeof saveData.weapon.name === 'string' && Number.isFinite(saveData.weapon.bonus)
+                ? { name: saveData.weapon.name.slice(0, 30), bonus: Math.max(0, Math.min(0.5, saveData.weapon.bonus)) }
+                : null;
+            combatPotionBonus = Number.isFinite(saveData.combatPotionBonus) ? Math.max(0, Math.min(0.35, saveData.combatPotionBonus)) : 0;
+            merchantFavor = Math.max(0, Math.min(100, Number(saveData.merchantFavor) || 0));
+            banditAlly = Boolean(saveData.banditAlly);
+            gameOverMessage = typeof saveData.gameOverMessage === 'string' ? saveData.gameOverMessage : '';
+            gameStarted = true;
+            document.getElementById('startScreen').hidden = true;
+            document.getElementById('gameContent').hidden = false;
+            updateHUD();
+            if (gameOverMessage) showGameOver(gameOverMessage);
+            else if (currentRoadEventId) {
+                const event = roadEvents.find(item => item.id === currentRoadEventId);
+                if (!event || !pendingNext) {
+                    currentRoadEventId = null;
+                    renderScene(currentSceneName);
+                } else renderRoadEvent(event, pendingNext);
+            } else renderScene(currentSceneName);
+            setSaveStatus(`已讀取進度${saveData.savedAt ? `・${new Date(saveData.savedAt).toLocaleString()}` : ''}`);
+            return true;
+        }
+
+        function startFreshGame() {
+            gameStarted = true;
+            document.getElementById('startScreen').hidden = true;
+            document.getElementById('gameContent').hidden = false;
+            resetGameState();
+            updateHUD();
+            renderScene('intro');
+        }
+
+        function hideEndingAnimation() {
+            if (endingTimer) clearTimeout(endingTimer);
+            endingTimer = null;
+            document.getElementById('endingCinematic')?.remove();
+            document.documentElement.classList.remove('cinematic-open');
+            const nextChoice = document.querySelector('#choicesContainer button');
+            if (nextChoice) nextChoice.focus({ preventScroll: true });
+        }
+
+        function showEndingAnimation(endingId) {
+            const ending = ENDING_ACHIEVEMENTS.find(item => item.id === endingId);
+            if (!ending) return;
+            hideEndingAnimation();
+            const themes = {
+                ending_success_free: { theme: 'ending-success', line: '天色轉亮，新的家園就在前方。' },
+                ending_completed: { theme: 'ending-completed', line: '避難所的窗燈亮起，新的生活有了著落。' },
+                ending_reject: { theme: 'ending-reject', line: '一盞燈交到援助者手中，求助的訊息終於送達。' },
+                ending_guardian: { theme: 'ending-guardian', line: '樹蔭下的日常，慢慢長成安穩的未來。' },
+                ending_slavery: { theme: 'ending-slavery', line: '裂開的光影提醒你，背信的代價無法抹去。' },
+                ending_orliant_denied: { theme: 'ending-denied', line: '城門仍在眼前，通往新生活的道路卻暫時關上。' }
+            }[endingId];
+
+            const layer = document.createElement('section');
+            layer.id = 'endingCinematic';
+            layer.className = `ending-cinematic ${themes.theme}`;
+            layer.setAttribute('role', 'dialog');
+            layer.setAttribute('aria-modal', 'true');
+            layer.setAttribute('aria-label', `${ending.title}結局動畫`);
+            const scenery = document.createElement('div');
+            scenery.setAttribute('aria-hidden', 'true');
+            scenery.innerHTML = '<div class="cinema-stars"></div><span class="cinema-shooting-star"></span><div class="cinema-glow"></div><div class="cinema-horizon"></div><div class="cinema-city"></div><div class="cinema-landmark"></div><div class="cinema-figures"><span class="cinema-figure guide"></span><span class="cinema-figure lina"></span><span class="cinema-figure friend"></span></div><div class="cinema-sparkles"><i></i><i></i><i></i><i></i></div>';
+            const copy = document.createElement('div');
+            copy.className = 'cinema-copy';
+            const overline = document.createElement('span');
+            overline.className = 'cinema-overline';
+            overline.textContent = '結局達成・成就解鎖';
+            const title = document.createElement('h2');
+            title.textContent = ending.title;
+            const description = document.createElement('p');
+            description.textContent = themes.line;
+            copy.append(overline, title, description);
+            const dismiss = document.createElement('button');
+            dismiss.className = 'cinema-dismiss';
+            dismiss.type = 'button';
+            dismiss.textContent = '繼續看結局　→';
+            dismiss.addEventListener('click', hideEndingAnimation);
+            layer.append(scenery, copy, dismiss);
+            document.documentElement.classList.add('cinematic-open');
+            document.body.appendChild(layer);
+            dismiss.focus({ preventScroll: true });
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            endingTimer = setTimeout(hideEndingAnimation, reducedMotion ? 1200 : 7800);
+        }
+
+        const roadEvents = [
+            { id: 'bandits', title: '遇到土匪', text: '一路上你遇到一群土匪，他們要求通行費或搶劫。', choices: [
+                { text: '交錢（-20 金錢）', effect: (s)=> { s.money -= 20; } },
+                { text: '反抗（可能受傷）', effect: (s)=> { s.hunger -= 15; const r = Math.random(); if (r < 0.2) { s.money = 0; } else if (r < 0.6) { s.money += 30; } else { s.money = Math.max(0, s.money - 10); } } }
+            ]},
+            { id: 'monster', title: '怪物襲擊', text: '黑暗中突然衝出怪物，你必須應付。', choices: [
+                    { text: '戰鬥（可能獲得獎勵）', effect: (s)=> { /* handled inline to use weapon */ },
+                    },
+                    { text: '逃跑（消耗體力）', effect: (s)=> { s.hunger -= 20; } }
+            ]},
+                { id: 'merchant', title: '路邊商人', text: '有個商人在路邊擺攤賣物品，可能有食物或武器可買。', choices: [
+                    { text: '離開攤位', effect: (s)=> {} }
+                ]},
+            { id: 'caravan_bandits', title: '被土匪劫掠的商隊', text: '你發現一隊正被土匪劫掠的商隊，倘若救援可能能獲得補給或賞金。', choices: [
+                { text: '救援商隊（獲得免費食物）', effect: (s)=> { s.hunger += 30; if (Math.random() < 0.7) s.money += 25; } },
+                { text: '視而不見', effect: (s)=> { s.money -= 5; } }
+            ]},
+            { id: 'caravan_monster', title: '被怪物襲擊的商隊', text: '你發現一隊正被怪物襲擊的商隊，救援可獲得補給（主要為食物）。', choices: [
+                { text: '救援商隊（獲得免費食物）', effect: (s)=> { s.hunger += 30; } },
+                { text: '視而不見', effect: (s)=> { s.money -= 5; } }
+            ]},
+            { id: 'storm', title: '山路暴雨', text: '天色驟暗，暴雨沖刷山路。前方有一座廢棄的石屋，也可以趁雨勢變小後繼續趕路。', choices: [
+                { text: '躲進石屋（飢餓度 +10%）' },
+                { text: '冒雨繼續（飢餓度 +20%）' }
+            ]},
+            { id: 'traveler', title: '熱心的旅人', text: '一位前往北方的旅人看見你們疲憊的樣子，主動分享沿途的消息與補給。', choices: [
+                { text: '接受食物補給與路況情報' },
+                { text: '婉拒好意，保持低調' }
+            ]},
+            { id: 'cannibal_market', title: '荒林邊緣的臨時市集', text: '林地入口有一處由旅人和部族商販組成的臨時市集。攤上的肉乾價格便宜，但保存方式看起來可疑；另一種密封乾糧比較貴，來源也較可靠。', choices: [
+                { text: '買便宜肉乾（-5 金錢，有機會已經腐壞）' },
+                { text: '買密封乾糧（-15 金錢，安全但較貴）' },
+                { text: '不買，直接進入荒林' }
+            ]}
+        ];
+
+        const REGIONAL_MONSTERS = {
+            border: { title: '邊境石像魔物', text: '王朝邊境的古老石像忽然亮起紅光，石甲魔物從關卡旁甦醒，擋住了道路。' },
+            cannibal_territory: { title: '荒林孢子獸', text: '腐葉下竄出一隻長滿菌傘的野獸，牠循著食物氣味朝你們逼近。' },
+            orc_escort: { title: '山道裂爪獸', text: '山道邊的岩縫傳來尖銳嘶鳴，裂爪獸突然撲向隊伍。' },
+            dwarf_kingdom: { title: '地底晶甲獸', text: '矮人礦坑深處傳來震動，一隻披著晶石甲殼的魔獸撞破岩壁。' },
+            dwarf_kingdom_alone: { title: '洞穴影獸', text: '洞窟裡的燈火逐一熄滅，影獸從隧道暗處悄然逼近。' },
+            dwarf_escort_conflict: { title: '雪線狼魔', text: '一道巨大的狼影越過山脊，朝你們和矮人守衛共同撲來。' },
+            polar_mountains: { title: '極地雪怪', text: '暴風雪中浮現一雙冰藍色眼睛，雪怪踏碎冰層，封住了山道。' },
+            free_kingdom_border: { title: '霜翼魔物', text: '接近自由國度時，一頭霜翼魔物掠過城牆，俯衝向通往奧莉安特的官道。' },
+            orliant_gate: { title: '城門前的盤查', text: '抵達奧莉安特外城時，守衛正在嚴格核對入境文件與庇護名額。' },
+            ending_success_free: { title: '官道伏擊魔物', text: '就在奧莉安特城門出現在眼前時，官道旁的魔物從雪堆中竄出，做最後一次攔截。' }
+        };
+
+        const MERCHANT_INVENTORIES = {
+            border: [
+                { id: 'bread', name: '黑麥麵包', price: 12, type: 'food', satiety: 20 },
+                { id: 'jerky', name: '燻肉乾', price: 20, type: 'food', satiety: 32 },
+                { id: 'short_sword', name: '短劍', price: 55, type: 'weapon', bonus: 0.06 },
+                { id: 'healing_potion', name: '小型回春藥水', price: 32, type: 'food', satiety: 25 }
+            ],
+            forest: [
+                { id: 'mushroom_stew', name: '野菇燉湯', price: 10, type: 'food', satiety: 24, spoiledChance: 0.3 },
+                { id: 'smoked_meat', name: '粗鹽煙燻肉', price: 14, type: 'food', satiety: 28 },
+                { id: 'antidote', name: '解毒藥水', price: 24, type: 'potion', satiety: 12 },
+                { id: 'woodsman_axe', name: '獵人手斧', price: 48, type: 'weapon', bonus: 0.1 }
+            ],
+            mountain: [
+                { id: 'hot_stew', name: '保溫肉湯', price: 22, type: 'food', satiety: 38 },
+                { id: 'warming_potion', name: '暖身藥水', price: 28, type: 'food', satiety: 30 },
+                { id: 'ice_axe', name: '登山冰斧', price: 75, type: 'weapon', bonus: 0.16 },
+                { id: 'courage_potion', name: '勇氣藥水', price: 42, type: 'potion', combatBonus: 0.16 }
+            ],
+            dwarf: [
+                { id: 'forge_bread', name: '爐烤黑麵包', price: 14, type: 'food', satiety: 30 },
+                { id: 'healing_draught', name: '矮人治療藥水', price: 36, type: 'food', satiety: 42 },
+                { id: 'warhammer', name: '矮人戰鎚', price: 95, type: 'weapon', bonus: 0.2 },
+                { id: 'rune_tonic', name: '符文勇氣藥劑', price: 48, type: 'potion', combatBonus: 0.2 }
+            ],
+            free: [
+                { id: 'fresh_meal', name: '新鮮午餐', price: 18, type: 'food', satiety: 34 },
+                { id: 'healing_draught', name: '治療藥水', price: 35, type: 'food', satiety: 40 },
+                { id: 'steel_sword', name: '精鋼長劍', price: 120, type: 'weapon', bonus: 0.24 },
+                { id: 'champion_tonic', name: '勇者藥劑', price: 55, type: 'potion', combatBonus: 0.22 }
+            ]
+        };
+
+        function getMerchantRegion(sceneName) {
+            if (sceneName === 'cannibal_territory') return 'forest';
+            if (sceneName === 'border') return 'border';
+            if (['dwarf_kingdom', 'dwarf_kingdom_alone', 'dwarf_respected', 'dwarf_challenges', 'dwarf_passage_orc'].includes(sceneName)) return 'dwarf';
+            if (['polar_mountains', 'polar_beast_fight', 'polar_beast_win', 'polar_beast_retreat', 'dwarf_passage'].includes(sceneName)) return 'mountain';
+            if (['free_kingdom_border', 'orliant_gate', 'ending_success_free', 'ending_orliant_denied'].includes(sceneName)) return 'free';
+            return 'border';
+        }
+
+        function getMerchantDiscount() {
+            return Math.min(0.3, Math.max(0, merchantFavor) * 0.003);
+        }
+
+        function getMerchantPrice(basePrice) {
+            return Math.max(1, Math.round(basePrice * (1 - getMerchantDiscount())));
+        }
+
+        function buildMerchantChoices(sceneName) {
+            const stock = MERCHANT_INVENTORIES[getMerchantRegion(sceneName)] || MERCHANT_INVENTORIES.border;
+            return [
+                ...stock.map(item => ({
+                    itemId: item.id,
+                    text: `購買${item.name}（-${getMerchantPrice(item.price)} 金錢）`
+                })),
+                { text: '不買，離開攤位' }
+            ];
+        }
+
+        function findMerchantItem(itemId) {
+            for (const stock of Object.values(MERCHANT_INVENTORIES)) {
+                const item = stock.find(candidate => candidate.id === itemId);
+                if (item) return item;
+            }
+            return null;
+        }
+
+        const gameStories = {
+            intro: {
+                icon: 'star',
+                text: `故事從聖國立斐爾斯開始。朋友帶著莉娜躲進你的住處，暫時甩開追兵，但她仍需要安全的落腳處與足夠食物。朋友把信交給你：「拜託你帶她離開聖國，前往自由國度奧莉安特，讓她能自己選擇未來。」你決定怎麼做？`,
+                choices: [
+                    { text: '開始救援計畫（籌錢、找路線）', next: 'plan' },
+                    { text: '先帶她回家安頓（暫時安全）', next: 'take_home' },
+                    { text: '不介入，結束故事', next: 'ending_reject' }
+                ]
+            },
+
+            plan: {
+                icon: 'checkpoint',
+                text: `你們已經安排好暫時的落腳處。現在可以陪莉娜去安全市集做短工、買食物，或繼續前往王朝邊境。若想先打探路線、讀信或休息，再開啟「其他準備」。`,
+                choices: [
+                    { text: '陪莉娜到安全市集做短工（+30 金錢，飢餓度 +20%）', next: 'work', money: 30, hunger: -15 },
+                    { text: '買食物（-10 金錢，降低飢餓度）', next: 'plan', money: -10, hunger: 30 },
+                    { text: '繼續前往神聖王朝邊境（飢餓度 +10%）', next: 'border', hunger: -5, travel: true },
+                    { text: '其他準備：打探路線、讀信或休息', next: 'preparations' }
+                ]
+            },
+
+            preparations: {
+                icon: 'checkpoint',
+                text: `選一項準備後會回到這個選單；打探路線和讀信都能再次查看，準備完成後再回到出發計畫即可。`,
+                choices: [
+                    { text: '去舊瞭望塔打探／重新確認安全路線', next: 'old_watchtower', hunger: -5 },
+                    { text: '重新閱讀朋友留下的信', next: 'friend_letter' },
+                    { text: '到旅店歇腳（-12 金錢，降低飢餓度）', next: 'roadside_inn', money: -12, hunger: 25 },
+                    { text: '私下找走私者（可能是叛徒）', next: 'traitor_smuggler', money: -5 },
+                    { text: '完成救援計畫（需要 120 金錢）', next: 'ending_completed', requiredMoney: 120 },
+                    { text: '回到出發計畫', next: 'plan' }
+                ]
+            },
+
+            old_watchtower: {
+                icon: 'border',
+                text: `守望者替你重新確認溪谷和巡邏時刻，並把路線標在地圖上。記下這條路後，下一次出發可避開一場突發路途事件；需要時也能再回來核對。`,
+                choices: [
+                    { text: '記下路線，繼續其他準備', next: 'preparations', effect: () => { safeRoute = true; } },
+                    { text: '回到其他準備', next: 'preparations' }
+                ]
+            },
+
+            roadside_inn: {
+                icon: 'home',
+                text: `旅店主人替莉娜準備了熱湯和乾淨的毯子。她終於能好好休息一晚；你也從主人口中得知，北方有願意收留難民的城鎮。`,
+                choices: [ { text: '休息完畢，回到其他準備', next: 'preparations' } ]
+            },
+
+            friend_letter: {
+                icon: 'heart',
+                text: `你重新展開朋友留下的信：「莉娜很勇敢，但她不該獨自承擔大人的決定。請先聽她的想法，再一起商量下一步。北方的自由國度有學校和庇護所，商人行會也有幾位可信的成員。」每次重讀都能再次確認路線與行會線索，也提醒你尊重莉娜自己的選擇。`,
+                choices: [
+                    { text: '記下行會線索，繼續其他準備', next: 'preparations', effect: () => { merchantFavor = Math.min(100, merchantFavor + 10); } },
+                    { text: '收好信，繼續其他準備', next: 'preparations' }
+                ]
+            },
+
+            work: {
+                icon: 'heart',
+                text: `莉娜選擇在熟悉的市集幫忙整理貨物，你全程陪在附近，確保環境安全。她靠自己的勞動換到報酬，也決定工作結束後先好好休息。`,
+                choices: [ { text: '回到計畫', next: 'plan' } ]
+            },
+
+            traitor_smuggler: {
+                icon: 'smuggler',
+                text: `這名走私者表面上願意幫忙，但你覺得他有些可疑。他要價便宜但可能會設下陷阱。`,
+                choices: [
+                    { text: '冒險信任（省錢但風險）', next: 'smuggler_betray', money: -30 },
+                    { text: '不信任，回到其他準備', next: 'preparations' }
+                ]
+            },
+
+            smuggler_betray: {
+                icon: 'bandits',
+                text: `走私者設下陷阱，導致你被跟蹤，損失一些金錢並被迫改路。`,
+                choices: [ { text: '硬闖換路（消耗）', next: 'border', money: -10, hunger: -10 } ]
+            },
+
+            border: {
+                icon: 'border',
+                text: `你來到神聖王朝的邊境，邊防森嚴，走私路線危險重重。要穿越這段路，你會被引導前往邊境附近的更荒涼地帶。`,
+                choices: [
+                    { text: '繼續前往食人族領地（冒險）', next: 'cannibal_territory', travel: true },
+                    { text: '在邊境驛站做短工或買食物', next: 'travel_stop' },
+                    { text: '暫時撤退回城', next: 'plan' }
+                ]
+            },
+
+            cannibal_territory: {
+                icon: 'cannibal',
+                text: `荒涼的林地中彌漫著血腥與古老圖騰的氣息。你得悄悄接近或面對他們的領袖。`,
+                choices: [
+                    { text: '挑戰食人族之王', next: 'cannibal_fight' },
+                    { text: '到入口營地短工或補充食物', next: 'travel_stop' },
+                    { text: '偷偷繞道，繼續往北走', next: 'polar_mountains', travel: true, hunger: -10 }
+                ]
+            },
+
+            travel_stop: {
+                icon: 'home',
+                text: `你們在路旁的驛站暫歇。莉娜可以接一些安全、短暫的搬運工作，也可以用旅費購買食物；休整後會回到剛才停下的路段。`,
+                choices: [
+                    { text: '莉娜做短工（+20 金錢，飢餓度 +15%）', next: 'travel_stop', money: 20, hunger: -10 },
+                    { text: '買熱食（-8 金錢，降低飢餓度）', next: 'travel_stop', money: -8, hunger: 25 },
+                    { text: '查看本地旅行商店（各地商品不同）', openMerchant: true },
+                    { text: '休整完畢，繼續原本路線', resumeTravel: true }
+                ]
+            },
+
+            cannibal_fight: {
+                icon: 'cannibal',
+                text: `你與食人族之王對峙，這場戰鬥將決定你之後的命運。`,
+                choices: [
+                    { text: '與之決一死戰', next: 'resolve_cannibal_fight' },
+                    { text: '撤退並放棄此路線', next: 'plan', hunger: -15 }
+                ]
+            },
+
+            resolve_cannibal_fight: {
+                icon: 'monster',
+                text: `正在決鬥……`,
+                choices: [ { text: '查看結果', next: 'fight_result', fight: true } ]
+            },
+
+            fight_result: {
+                icon: 'orc',
+                text: `戰鬥結果會依隨機與狀態判定。`,
+                choices: [ { text: '繼續', next: 'orc_presentation' } ]
+            },
+
+            orc_presentation: {
+                icon: 'orc',
+                text: `你把食人族之王的頭顱帶到獸人王朝作為談判籌碼。獸人王朝的領主非常高興，她決定派出最強的戰士護送你們，以保安全。`,
+                choices: [
+                    { text: '接受獸人護送（較安全）', next: 'orc_escort' , money: 0 },
+                    { text: '婉拒護送（自由但危險）', next: 'attempt_escape' }
+                ]
+            },
+
+            orc_escort: {
+                icon: 'orc',
+                text: `獸人王朝派出她最強的戰士作為護衛。你們在強力護送下前往下一段路程，路上的危險會大幅降低。`,
+                choices: [ { text: '在護送下出發', next: 'dwarf_escort_conflict', effect: ()=>{ hasEscort = true; }, travel: true } ]
+            },
+
+            attempt_escape: {
+                icon: 'river',
+                text: `你帶著莉娜出發了，路程仍有不可預期的危險。你決定前往矮人帝國，那裡可能有更安全的庇護所。`,
+                choices: [ { text: '前往矮人帝國', next: 'dwarf_kingdom_alone', travel: true } ]
+            },
+
+            dwarf_kingdom: {
+                icon: 'orc',
+                text: `經過漫長的旅途，你們終於來到了矮人帝國的邊界——一個由雄偉山脈環繞、挖掘進山體內的地下城市。矮人們看起來警惕但好客。你向他們解釋了你的處境，他們願意提供暫時的庇護。`,
+                choices: [
+                    { text: '接受矮人帝國的庇護（補充體力）', next: 'dwarf_challenges', hunger: 30, money: -10 },
+                    { text: '到矮人工坊商店購買裝備與藥水', openMerchant: true },
+                    { text: '感謝後繼續前進', next: 'dwarf_passage' }
+                ]
+            },
+
+            dwarf_escort_conflict: {
+                icon: 'monster',
+                text: `當你帶著獸人戰士進入矮人帝國時，矮人的警衛立刻板起臉來。他們用帶著敵意的眼光看著獸人，低聲談論著"入侵者"和"獵物"之類的詞語。領袖走上前來，用不客氣的語氣說："獸人不受歡迎。我們矮人帝國與獸人朝代有著古老的仇恨。"`,
+                choices: [
+                    { text: '允許獸人戰士與矮人決鬥來證明價值', next: 'orc_dwarf_duel' },
+                    { text: '試圖調解，說明獸人是你的盟友', next: 'dwarf_mediation' },
+                    { text: '請獸人戰士在城外等候', next: 'dwarf_kingdom_alone' }
+                ]
+            },
+
+            orc_dwarf_duel: {
+                icon: 'monster',
+                text: `獸人戰士接受了挑戰。矮人帝國最強的戰士走出來與她對峙。整個大廳陷入緊張的沉默……`,
+                choices: [ { text: '查看決鬥結果', next: 'orc_dwarf_result' } ]
+            },
+
+            orc_dwarf_result: {
+                icon: 'heart',
+                text: `經過一場激烈的對戰，獸人戰士展現了令人印象深刻的力量與技巧。矮人戰士雖然沒有落敗，但明顯被壓制。觀看的矮人們開始鼓掌，他們的領袖點了點頭，表示尊敬。"看來我們低估了你們，"領袖說，"獸人也有勇士的尊嚴。你們可以進入矮人帝國。"`,
+                choices: [ { text: '進入矮人帝國接受庇護', next: 'dwarf_respected', hunger: 30, money: -10 } ]
+            },
+
+            dwarf_mediation: {
+                icon: 'heart',
+                text: `你向矮人領袖解釋了獸人戰士如何幫助你們逃脫，以及她如何保護了莉娜的安全。你提到古老的仇恨無法改變，但勇氣和正義是共通的。領袖聽後陷入沉思，最後說："或許是時候放下過去的成見了。"他轉向獸人戰士，說："歡迎進入矮人帝國。"`,
+                choices: [ { text: '進入矮人帝國接受庇護', next: 'dwarf_respected', hunger: 30, money: -10 } ]
+            },
+
+            dwarf_respected: {
+                icon: 'orc',
+                text: `在獸人戰士的陪伴下，你們被帶入了矮人帝國的深處。矮人們對獸人的態度逐漸轉變，開始用敬意看待她。在鍛造廠裡，你被邀請參加一個特殊的測試。`,
+                choices: [
+                    { text: '接受挑戰', next: 'dwarf_fight_special' },
+                    { text: '禮貌拒絕，繼續前進', next: 'dwarf_passage_orc' }
+                ]
+            },
+
+            dwarf_fight_special: {
+                icon: 'monster',
+                text: `你與矮人冠軍開始決鬥……`,
+                choices: [ { text: '查看結果', next: 'dwarf_result' } ]
+            },
+
+            dwarf_passage_orc: {
+                icon: 'border',
+                text: `離開矮人帝國時，獸人戰士突然停下腳步。她轉向你說："我在這裡的使命已經完成。你現在已經足夠強大，可以自己保護那個女孩。"她指向前方的路，"自由國度就在北方。去那裡，給她一個真正的未來。"她轉身走向來時的路，消失在地下通道中。`,
+                choices: [
+                    { text: '感謝獸人戰士，繼續前往自由國度', next: 'free_kingdom_border', travel: true, effect: ()=>{ hasEscort = false; } }
+                ]
+            },
+
+            dwarf_kingdom_alone: {
+                icon: 'home',
+                text: `你請獸人戰士在城外等候。當你進入矮人帝國後，矮人們對你的態度變得友善起來。"不帶那些野蠻人進來，明智的選擇，"一位矮人商人說。你接受了他們的庇護。`,
+                choices: [
+                    { text: '接受矮人帝國的庇護（補充體力）', next: 'dwarf_challenges', hunger: 30, money: -10 },
+                    { text: '到矮人工坊商店購買裝備與藥水', openMerchant: true },
+                    { text: '感謝後等待獸人戰士的信息', next: 'dwarf_warrior_await' }
+                ]
+            },
+
+            dwarf_warrior_await: {
+                icon: 'border',
+                text: `經過幾天的等待，獸人戰士終於在城門前出現。但她的表情很嚴肅。"矮人已經發現莉娜的身份，"她警告說，"他們想將她交給神聖王朝領取賞金。我們必須立即離開。"`,
+                choices: [
+                    { text: '立即逃離，獸人將在大門前阻擋追兵', next: 'dwarf_escape_conflict' }
+                ]
+            },
+
+            dwarf_escape_conflict: {
+                icon: 'monster',
+                text: `當你帶著莉娜衝出城門時，矮人警衛試圖阻止你們。獸人戰士擋在你們身前，與警衛們對峙。"走！"她對你大喊，"我會在這裡延遲他們！"她拔出武器，準備與迎面而來的矮人戰士戰鬥。`,
+                choices: [
+                    { text: '與獸人並肩戰鬥', next: 'dwarf_gate_battle' },
+                    { text: '犧牲獸人逃脫', next: 'escape_without_orc' }
+                ]
+            },
+
+            dwarf_gate_battle: {
+                icon: 'monster',
+                text: `你和獸人戰士並肩作戰，奮力對抗矮人警衛。在一陣激烈的交戰後，你們終於突破了防線。獸人戰士受了傷，但仍然堅定地說："快走，別回顧。"`,
+                choices: [
+                    { text: '逃離矮人帝國領地', next: 'free_kingdom_border', travel: true, money: -20, hunger: -20 }
+                ]
+            },
+
+            escape_without_orc: {
+                icon: 'spark',
+                text: `你帶著莉娜拔腿就跑，留下獸人戰士獨自對抗矮人警衛。她的喊聲漸漸消失在身後。你成功逃脫了，但心中充滿了罪惡感——你背棄了那位曾救過你的勇士。`,
+                choices: [
+                    { text: '逃離矮人帝國領地，心感悔疚', next: 'free_kingdom_border', travel: true, money: 0, hunger: -15, effect: ()=>{ hasEscort = false; } }
+                ]
+            },
+
+            dwarf_challenges: {
+                icon: 'orc',
+                text: `在矮人帝國的鍛造廠，你被邀請參加一項測試——與矮人格鬥冠軍比賽。贏了會獲得報酬和敬重，輸了也沒有懲罰。`,
+                choices: [
+                    { text: '接受挑戰', next: 'dwarf_fight' },
+                    { text: '禮貌拒絕，繼續前進', next: 'dwarf_passage' }
+                ]
+            },
+
+            dwarf_fight: {
+                icon: 'monster',
+                text: `戰鬥開始……`,
+                choices: [ { text: '查看結果', next: 'dwarf_result' } ]
+            },
+
+            dwarf_result: {
+                icon: 'heart',
+                text: `無論勝敗，矮人們都尊敬你的勇氣。領袖給了你一份禮物：一張通往下一個國家的安全通行證。`,
+                choices: [ { text: '接受禮物並出發', next: 'dwarf_passage', money: 50 } ]
+            },
+
+            dwarf_passage: {
+                icon: 'border',
+                text: `離開矮人帝國後，前方是通往北方的極地雪山。山脈另一側就是自由國度奧莉安特；若要進入國境，就得先穿過冰雪封鎖的山道。`,
+                choices: [
+                    { text: '整備後進入極地雪山', next: 'polar_mountains', travel: true },
+                    { text: '在山腳驛站做短工或買食物', next: 'travel_stop' }
+                ]
+            },
+
+            polar_mountains: {
+                icon: 'monster',
+                text: `暴雪覆蓋山道，風雪中不時傳來沉重的腳步聲。這是抵達自由國度前最艱難的一段路；遠處有雪怪的身影，也能沿著冰谷尋找較安全的通道。`,
+                choices: [
+                    { text: '追蹤雪怪，清出山道', next: 'polar_beast_fight' },
+                    { text: '沿冰谷小心穿越', next: 'free_kingdom_border', travel: true, hunger: -10 },
+                    { text: '到山腳營地工作或買食物', next: 'travel_stop' }
+                ]
+            },
+
+            polar_beast_fight: {
+                icon: 'monster',
+                text: `一頭巨大的雪怪從冰霧中現身，擋住了山道。莉娜躲到岩壁後，你必須決定如何應對。`,
+                choices: [
+                    { text: '迎戰雪怪（依飢餓度與武器判定）', fight: true, fightWinNext: 'polar_beast_win', fightLoseNext: 'polar_beast_retreat' },
+                    { text: '避開牠，繞冰谷前往自由國度', next: 'free_kingdom_border', travel: true, hunger: -15 }
+                ]
+            },
+
+            polar_beast_win: {
+                icon: 'spark',
+                text: `雪怪倒退回冰霧深處，山道終於暢通。你們找到一批遺留的登山補給，莉娜也能稍作休息。`,
+                choices: [ { text: '帶上補給，繼續前往自由國度', next: 'free_kingdom_border', hunger: 15, travel: true } ]
+            },
+
+            polar_beast_retreat: {
+                icon: 'river',
+                text: `你們沒有擊退雪怪，只能沿著山壁撤到較安全的冰谷。追兵和風雪仍在身後，必須把握空檔繼續前進。`,
+                choices: [ { text: '沿冰谷繼續前往自由國度', next: 'free_kingdom_border', hunger: -10, travel: true } ]
+            },
+
+            free_kingdom_border: {
+                icon: 'river',
+                text: `翻越雪山後，黎明照亮自由國度奧莉安特的邊境。邊境守衛確認你們已抵達國境，但提醒你們仍須接受入境與庇護審查。`,
+                choices: [
+                    { text: '沿官道前往奧莉安特入境關卡', next: 'orliant_gate', travel: true },
+                    { text: '在邊境驛站做短工或買食物', next: 'travel_stop' }
+                ]
+            },
+
+            orliant_gate: {
+                icon: 'checkpoint',
+                text: `自由國度奧莉安特就在關卡之後。你們已抵達奧莉安特國門，但庇護名額有限，守衛必須審查申請、旅費與可信任的引薦。審查可能通過，也可能遭拒；若未獲許可，你們便無法進入國境。`,
+                choices: [
+                    { text: '提交庇護申請，接受入境審查（結果未定）', admissionAttempt: true },
+                    { text: '先留在自由國度邊境驛站整備', next: 'travel_stop' }
+                ]
+            },
+
+            ending_orliant_denied: {
+                icon: 'border',
+                text: `審查最終沒有通過。奧莉安特的城門在你們面前緩緩合上，守衛承諾會保留申請紀錄，卻無法讓你們在此刻入境。你們暫時留在自由國度邊境，莉娜仍有機會尋求新的援助，但這趟旅程只能先停在城門之外。\n\n＝＝＝ 結局成就：城門之外 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_success_free: {
+                icon: 'heart',
+                text: `你們終於獲准進入自由國度奧莉安特。在經歷漫長而危險的旅途後，莉娜終於能安心呼吸自由的空氣。\n\n這裡有安全的住處、學校與可靠的援助者。莉娜逐漸成長為獨立、自信的年輕女性，並由她自己決定未來的道路。\n\n你在奧莉安特找到工作，莉娜也結交了新的朋友。聖國立斐爾斯的追捕與旅途中的恐懼，終於成為過去。\n\n＝＝＝ 結局成就：自由新生 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_completed: {
+                icon: 'heart',
+                text: `你靠著工作、補給與可靠情報，湊足了救援所需的資源，並替莉娜找到安全住處與新的身分。\n\n她終於不用再害怕明天，而你也明白，真正的救援是讓她能選擇自己的未來。\n\n＝＝＝ 結局成就：救援計畫完成 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_reject: {
+                icon: 'spark',
+                text: `你評估後發現自己暫時沒有足夠能力獨自帶莉娜離開，於是把線索交給可信任的救援組織，請他們安排安全住所。這段旅程先在此停下，但求助與合作，仍然是一種負責任的選擇。\n\n＝＝＝ 結局成就：求助與合作 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            take_home: {
+                icon: 'home',
+                text: `你決定把莉娜帶回家收養，暫時給她遮風避雨與照顧。你面臨了人生中最重要的抉擇。`,
+                choices: [
+                    { text: '成為可靠的監護人，陪她安心長大', next: 'ending_guardian' },
+                    { text: '背叛她，將她賣回神聖王朝成奴隸', next: 'ending_slavery' }
+                ]
+            },
+
+            ending_guardian: {
+                icon: 'heart',
+                text: `你為莉娜安排安全住處、教育與可靠的監護支持，也一直尊重她的意願。多年後，她成長為獨立、自信的年輕女性，選擇自己的道路，後來你們莉娜成為了你的妻子。\n\n你們在小城裡有了安穩的生活。莉娜不必再害怕追兵，你跟莉娜過著幸福的生活。\n\n＝＝＝ 結局成就：蘿莉控 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            },
+
+            ending_slavery: {
+                icon: 'spark',
+                text: `你背叛了莉娜的信任，把她交還給神聖王朝。賞金沒有帶來安寧，反而讓你不斷想起自己做出的選擇。\n\n多年後你仍為此後悔，但莉娜已經離開你的生活。\n\n＝＝＝ 結局成就：背信的代價 ＝＝＝`,
+                choices: [ { text: '重新開始', next: 'intro' } ]
+            }
+
+            // 額外場景：神秘神殿與過河
+        };
+
+        // 資源狀態
+        let money = 50;
+        let hunger = 60; // 內部飽足值：下降代表莉娜更餓，0 時無法繼續
+        let openingTimers = [];
+
+        function startOpening() {
+            document.getElementById('welcomeScreen').hidden = true;
+            document.getElementById('openingScreen').hidden = false;
+            const caption = document.getElementById('openingCaption');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const timings = reducedMotion ? [700, 1400, 2200] : [2400, 5200, 8200];
+            const lines = [
+                '追兵的腳步聲在夜色中逼近，莉娜只能不停奔跑。',
+                '朋友及時趕到，擋住追兵，帶她逃離危險。',
+                '「拜託你，帶她去安全的地方。」朋友把莉娜託付給你。'
+            ];
+            openingTimers.forEach(clearTimeout);
+            openingTimers = [];
+            lines.forEach((line, index) => {
+                openingTimers.push(setTimeout(() => { caption.textContent = line; }, timings[index]));
+            });
+            openingTimers.push(setTimeout(startGame, reducedMotion ? 2800 : 9000));
+        }
+
+        function startGame() {
+            openingTimers.forEach(clearTimeout);
+            openingTimers = [];
+            startFreshGame();
+        }
+
+        document.getElementById('beginOpening').addEventListener('click', startOpening);
+        document.getElementById('skipOpening').addEventListener('click', startGame);
+        document.getElementById('loadFromStart').addEventListener('click', loadSavedGame);
+        document.getElementById('saveButton').addEventListener('click', saveProgress);
+        document.getElementById('loadButton').addEventListener('click', loadSavedGame);
+        document.getElementById('viewEndingsFromStart').addEventListener('click', openEndingLibrary);
+        document.getElementById('viewEndingsButton').addEventListener('click', openEndingLibrary);
+        document.getElementById('closeEndingLibrary').addEventListener('click', closeEndingLibrary);
+        document.getElementById('backToEndingList').addEventListener('click', () => {
+            document.getElementById('endingDetail').hidden = true;
+            document.getElementById('endingEntryList').hidden = false;
+            document.querySelector('#endingEntryList button')?.focus({ preventScroll: true });
+        });
+        document.getElementById('endingLibrary').addEventListener('click', event => {
+            if (event.target.id === 'endingLibrary') closeEndingLibrary();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !document.getElementById('endingLibrary').hidden) closeEndingLibrary();
+            else if (event.key === 'Escape' && document.getElementById('endingCinematic')) hideEndingAnimation();
+        });
+
+        const JOURNEY_STAGES = [
+            new Set(['intro', 'take_home']),
+            new Set(['plan', 'preparations', 'travel_stop', 'work', 'traitor_smuggler', 'smuggler_betray', 'old_watchtower', 'roadside_inn', 'friend_letter', 'ending_completed', 'ending_reject', 'ending_guardian', 'ending_slavery']),
+            new Set(['border']),
+            new Set(['cannibal_territory', 'cannibal_fight', 'resolve_cannibal_fight', 'fight_result']),
+            new Set(['orc_presentation', 'orc_escort', 'attempt_escape', 'dwarf_kingdom', 'dwarf_escort_conflict', 'orc_dwarf_duel', 'orc_dwarf_result', 'dwarf_mediation', 'dwarf_respected', 'dwarf_fight_special', 'dwarf_passage_orc', 'dwarf_kingdom_alone', 'dwarf_warrior_await', 'dwarf_escape_conflict', 'dwarf_gate_battle', 'escape_without_orc', 'dwarf_challenges', 'dwarf_fight', 'dwarf_result', 'dwarf_passage']),
+            new Set(['polar_mountains', 'polar_beast_fight', 'polar_beast_win', 'polar_beast_retreat']),
+            new Set(['free_kingdom_border', 'ending_orliant_denied']),
+            new Set(['orliant_gate', 'ending_success_free'])
+        ];
+
+        const JOURNEY_STAGE_LABELS = ['聖國立斐爾斯', '救援準備', '王朝邊境', '食人族荒林', '獸人與矮人', '極地雪山', '自由國度邊境', '自由國度・奧莉安特'];
+
+        function updateJourneyMap(sceneName) {
+            const steps = [...document.querySelectorAll('.journey-step')];
+            const caption = document.getElementById('journeyCaption');
+            const progress = document.getElementById('journeyProgress');
+            let stageIndex = JOURNEY_STAGES.findIndex(stage => stage.has(sceneName));
+            if (sceneName === 'travel_stop') {
+                const returnStage = JOURNEY_STAGES.findIndex(stage => stage.has(travelReturnScene));
+                if (returnStage >= 0) stageIndex = returnStage;
+            }
+            if (sceneName === 'ending_orliant_denied') stageIndex = JOURNEY_STAGES.length - 2;
+            else if (sceneName && sceneName.startsWith('ending_')) stageIndex = JOURNEY_STAGES.length - 1;
+            if (stageIndex < 0) stageIndex = 0;
+
+            steps.forEach((step, index) => {
+                step.classList.toggle('is-complete', index < stageIndex);
+                step.classList.toggle('is-active', index === stageIndex);
+                if (index === stageIndex) step.setAttribute('aria-current', 'step');
+                else step.removeAttribute('aria-current');
+            });
+            if (caption) caption.textContent = `第 ${stageIndex + 1} / ${JOURNEY_STAGES.length} 站・${JOURNEY_STAGE_LABELS[stageIndex]}`;
+            if (progress) progress.style.width = `${stageIndex * (100 / steps.length)}%`;
+        }
+
+        function updateHUD() {
+            const moneyDisplay = document.getElementById('moneyDisplay');
+            const hungerFill = document.getElementById('hungerFill');
+            const hungerValue = document.getElementById('hungerValue');
+            const hungerBar = document.querySelector('.hunger[role="progressbar"]');
+            const hungerPercent = 100 - Math.max(0, Math.min(100, hunger));
+            if (moneyDisplay) moneyDisplay.textContent = `金錢: ${money} ${hasEscort ? '| 護送: 是' : ''} ${weapon ? '| 武器: ' + weapon.name : ''} | 行會好感: ${merchantFavor}`;
+            if (hungerFill) hungerFill.style.width = `${hungerPercent}%`;
+            if (hungerFill) hungerFill.classList.toggle('is-critical', hungerPercent >= 80);
+            if (hungerValue) hungerValue.textContent = `${hungerPercent}%`;
+            if (hungerBar) hungerBar.setAttribute('aria-valuenow', String(hungerPercent));
+        }
+
+        function showGameOver(message) {
+            gameOverMessage = message || '遊戲結束';
+            currentRoadEventId = null;
+            pendingNext = null;
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            storyContent.innerHTML = '';
+            const p = document.createElement('p');
+            p.textContent = gameOverMessage;
+            storyContent.appendChild(p);
+            choicesContainer.innerHTML = '';
+            const btn = document.createElement('button');
+            btn.className = 'restart-btn';
+            btn.textContent = '重新開始';
+            btn.onclick = () => restartGame();
+            choicesContainer.appendChild(btn);
+            saveProgress();
+        }
+
+        function resetGameState() {
+            money = 50;
+            hunger = 60;
+            hasEscort = false;
+            safeRoute = false;
+            pendingNext = null;
+            weapon = null;
+            combatPotionBonus = 0;
+            merchantFavor = 0;
+            banditAlly = false;
+            travelReturnScene = 'border';
+            currentSceneName = 'intro';
+            currentRoadEventId = null;
+            pendingNext = null;
+            gameOverMessage = '';
+        }
+
+        function restartGame() {
+            gameStarted = true;
+            resetGameState();
+            updateHUD();
+            renderScene('intro');
+        }
+
+        function chooseRoadEvent() {
+            // 根據 merchantFavor 調整 merchant 事件權重
+            const baseWeights = {
+                bandits: 1,
+                monster: 1,
+                merchant: 1,
+                caravan_bandits: 0.8,
+                caravan_monster: 0.8,
+                storm: 0.9,
+                traveler: 0.9
+            };
+            const weighted = [];
+            roadEvents.forEach(ev => {
+                if (ev.id === 'cannibal_market' || ev.id === 'monster') return;
+                let w = baseWeights[ev.id] || 1;
+                if (ev.id === 'merchant') w = w * (0.2 + merchantFavor / 100);
+                // 如果玩家與土匪為盟友，商人出現機會再降一層
+                if (banditAlly && ev.id === 'merchant') w = w * 0.5;
+                // push ev id w times scaled
+                const count = Math.max(0, Math.round(w * 10));
+                for (let i=0;i<count;i++) weighted.push(ev);
+            });
+            if (weighted.length === 0) return roadEvents[Math.floor(Math.random()*roadEvents.length)];
+            return weighted[Math.floor(Math.random()*weighted.length)];
+        }
+
+        function triggerRoadEvent(nextScene) {
+            if (safeRoute) {
+                safeRoute = false;
+                if (ENDING_ACHIEVEMENTS.some(achievement => achievement.id === nextScene)) recordEndingAchievement(nextScene);
+                renderScene(nextScene);
+                return;
+            }
+            if (nextScene === 'cannibal_territory' && Math.random() < 0.45) {
+                renderRoadEvent(roadEvents.find(event => event.id === 'cannibal_market'), nextScene);
+                return;
+            }
+            // 減少護送時事件發生機率或影響
+            if (hasEscort && !REGIONAL_MONSTERS[nextScene] && Math.random() < 0.8) {
+                if (ENDING_ACHIEVEMENTS.some(achievement => achievement.id === nextScene)) recordEndingAchievement(nextScene);
+                renderScene(nextScene);
+                return;
+            }
+            const regionalMonster = REGIONAL_MONSTERS[nextScene];
+            const evt = regionalMonster && Math.random() < (hasEscort ? 0.2 : 0.45)
+                ? { id: 'monster', title: regionalMonster.title, text: regionalMonster.text, choices: [{ text: '迎戰魔物（可能獲得獎勵）' }, { text: '撤退避開（消耗體力）' }] }
+                : chooseRoadEvent();
+            renderRoadEvent(evt, nextScene);
+        }
+
+        function renderRoadEvent(evt, nextScene) {
+            pendingNext = nextScene;
+            currentRoadEventId = evt.id;
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            const sceneIcon = document.getElementById('sceneIcon');
+            updateJourneyMap(nextScene);
+            if (sceneIcon) sceneIcon.innerHTML = ICON_SVGS[evt.id] || '';
+            storyContent.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            const h = document.createElement('h3'); h.textContent = evt.title; storyContent.appendChild(h);
+            const p = document.createElement('p'); p.textContent = evt.text; storyContent.appendChild(p);
+
+            const eventChoices = evt.id === 'merchant' ? buildMerchantChoices(nextScene) : evt.choices;
+            eventChoices.forEach((c, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn ' + (i%2===0? 'primary':'secondary');
+                const keys = ['star','heart','spark'];
+                btn.innerHTML = (ICON_SVGS[keys[i % keys.length]] || ICON_SVGS.star) + ("<span>"+c.text+"</span>");
+                btn.onclick = () => {
+                    const merchantItem = evt.id === 'merchant' ? findMerchantItem(c.itemId) : null;
+                    const cannibalPurchase = evt.id === 'cannibal_market'
+                        ? (c.text.includes('便宜肉乾') ? 5 : c.text.includes('密封乾糧') ? 15 : 0)
+                        : 0;
+                    const purchasePrice = (merchantItem ? getMerchantPrice(merchantItem.price) : 0) || cannibalPurchase;
+                    if (purchasePrice && money < purchasePrice) {
+                        alert(`金錢不足，需要 ${purchasePrice} 金錢。`);
+                        return;
+                    }
+                    let foodOutcome = '';
+                    let merchantOutcome = '';
+                    hunger = Math.max(0, hunger - 5);
+                    if (evt.id === 'bandits') {
+                        if (c.text.indexOf('交錢')>=0) { money = Math.max(0, money-20); }
+                        if (c.text.indexOf('反抗')>=0) {
+                            hunger = Math.max(0, hunger-15);
+                            const r = Math.random();
+                            if (r < 0.2) { money = 0; }
+                            else if (r < 0.6) { money += 30; }
+                            else { money = Math.max(0, money-10); }
+                        }
+                        if (c.text.indexOf('加入')>=0 || c.text.indexOf('加入土匪')>=0) {
+                            // 加入土匪：立即小利，但商人好感下降與之後商人事件減少
+                            money += 20;
+                            banditAlly = true;
+                            merchantFavor = Math.max(0, merchantFavor - 30);
+                        }
+                    }
+                    if (evt.id === 'monster') {
+                        if (c.text.includes('戰鬥') || c.text.includes('迎戰')) {
+                            const base = Math.min(0.95, 0.35 + (hunger / 400) + (weapon ? weapon.bonus : 0) + combatPotionBonus);
+                            combatPotionBonus = 0;
+                            const win = Math.random() < base;
+                            if (win) money += 25;
+                            else { hunger = Math.max(0, hunger - 20); money = Math.max(0, money - 10); }
+                        } else if (c.text.includes('逃跑') || c.text.includes('撤退')) {
+                            hunger = Math.max(0, hunger - 15);
+                        }
+                    }
+                    if (evt.id === 'caravan_bandits' || evt.id === 'caravan_monster') {
+                        if (c.text.indexOf('救援')>=0) {
+                            hunger = Math.min(100, hunger + 30);
+                            if (evt.id === 'caravan_bandits') {
+                                merchantFavor = Math.min(100, merchantFavor + 35);
+                                if (Math.random() < 0.7) money += 25;
+                            } else {
+                                merchantFavor = Math.min(100, merchantFavor + 20);
+                            }
+                        }
+                        if (c.text.indexOf('視而不見')>=0) { money = Math.max(0,money-5); }
+                    }
+                    if (evt.id === 'storm') {
+                        hunger = Math.max(0, hunger - (c.text.includes('石屋') ? 5 : 15));
+                    }
+                    if (evt.id === 'traveler' && c.text.includes('食物補給')) {
+                        hunger = Math.min(100, hunger + 15);
+                        merchantFavor = Math.min(100, merchantFavor + 5);
+                    }
+                    if (evt.id === 'cannibal_market' && cannibalPurchase) {
+                        money -= cannibalPurchase;
+                        if (c.text.includes('便宜肉乾') && Math.random() < 0.55) {
+                            hunger = Math.max(0, hunger - 30);
+                            foodOutcome = '肉乾已經腐壞！莉娜吃下後更餓了，飢餓度大幅上升。';
+                        } else {
+                            hunger = Math.min(100, hunger + 25);
+                            foodOutcome = c.text.includes('密封乾糧')
+                                ? '密封乾糧保存良好，莉娜吃飽後恢復了體力。'
+                                : '幸運地，這批肉乾還能食用，莉娜補充了一些體力。';
+                        }
+                    }
+                    if (evt.id === 'merchant' && merchantItem) {
+                        money -= purchasePrice;
+                        if (merchantItem.type === 'food') {
+                            if (merchantItem.spoiledChance && Math.random() < merchantItem.spoiledChance) {
+                                hunger = Math.max(0, hunger - 25);
+                                merchantOutcome = `${merchantItem.name}變質了！莉娜吃下後飢餓度上升。`;
+                            } else {
+                                hunger = Math.min(100, hunger + merchantItem.satiety);
+                                merchantOutcome = `已購買${merchantItem.name}，莉娜的飢餓度降低。`;
+                            }
+                        } else if (merchantItem.type === 'weapon') {
+                            weapon = { name: merchantItem.name, bonus: merchantItem.bonus };
+                            merchantOutcome = `已購買${merchantItem.name}，戰力提升。`;
+                        } else if (merchantItem.type === 'potion' && merchantItem.satiety) {
+                            hunger = Math.min(100, hunger + merchantItem.satiety);
+                            merchantOutcome = `已使用${merchantItem.name}，莉娜恢復了一些體力。`;
+                        } else if (merchantItem.type === 'potion' && merchantItem.combatBonus) {
+                            combatPotionBonus = Math.max(combatPotionBonus, merchantItem.combatBonus);
+                            merchantOutcome = `${merchantItem.name}已備妥，下一場戰鬥可提升勝率。`;
+                        }
+                    }
+
+                    currentRoadEventId = null;
+                    pendingNext = null;
+                    updateHUD();
+                    if (hunger <= 0) { showGameOver(foodOutcome || '莉娜因飢餓而倒下，救援旅程結束。'); return; }
+                    if (evt.id === 'merchant' && !evt.fromTravelStop && nextScene === 'cannibal_territory' && c.text.includes('離開')) {
+                        if (Math.random() < 0.45) renderRoadEvent(roadEvents.find(event => event.id === 'cannibal_market'), nextScene);
+                        else renderScene(nextScene);
+                    } else {
+                        if (ENDING_ACHIEVEMENTS.some(achievement => achievement.id === nextScene)) recordEndingAchievement(nextScene);
+                        renderScene(nextScene);
+                    }
+                    if (foodOutcome) setSaveStatus(foodOutcome, c.text.includes('便宜肉乾') && foodOutcome.includes('腐壞'));
+                    if (merchantOutcome) setSaveStatus(merchantOutcome, merchantOutcome.includes('變質'));
+                };
+                choicesContainer.appendChild(btn);
+            });
+            saveProgress();
+        }
+
+        function handleChoice(choice) {
+            if (choice.next === 'intro') {
+                restartGame();
+                return;
+            }
+            if (choice.requiredMoney && money < choice.requiredMoney) {
+                alert(`需要 ${choice.requiredMoney} 金錢才能完成救援，目前只有 ${money}。`);
+                return;
+            }
+            const deltaMoney = choice.money || 0;
+            if (deltaMoney < 0 && (money + deltaMoney) < 0) { alert('金錢不足。'); return; }
+            // 每次行動消耗飽足值，代表莉娜的飢餓度上升。
+            hunger -= 5;
+            if (choice.hunger) hunger += choice.hunger;
+            if (choice.money) money += choice.money;
+            if (choice.requiredMoney) money -= choice.requiredMoney;
+            hunger = Math.max(0, Math.min(100, hunger));
+            updateHUD();
+            if (hunger <= 0) { showGameOver('莉娜的飢餓度已達極限，無法繼續旅程。'); return; }
+
+            // 戰鬥選項
+            if (choice.fight) {
+                const base = Math.min(0.95, 0.35 + (hunger / 400) + (weapon ? weapon.bonus : 0) + combatPotionBonus); // 補給、裝備和藥水都會提升勝率
+                combatPotionBonus = 0;
+                const win = Math.random() < base;
+                if (win) {
+                    money += 20;
+                    updateHUD();
+                    renderScene(choice.fightWinNext || 'orc_presentation');
+                } else {
+                    hunger = Math.max(0, hunger - 20);
+                    money = Math.max(0, money - 20);
+                    updateHUD();
+                    if (hunger <= 0) { showGameOver('莉娜因飢餓而倒下，救援旅程結束。'); return; }
+                    renderScene(choice.fightLoseNext || 'plan');
+                }
+                return;
+            }
+
+            // 特殊 effect 屬性（像是設定護送）
+            if (typeof choice.effect === 'function') {
+                try { choice.effect(); } catch(e){}
+            }
+
+            if (choice.admissionAttempt) {
+                const approvalChance = Math.min(0.9, 0.2 + merchantFavor * 0.004 + (hasEscort ? 0.15 : 0) + (money >= 60 ? 0.1 : 0));
+                const endingId = Math.random() < approvalChance ? 'ending_success_free' : 'ending_orliant_denied';
+                recordEndingAchievement(endingId);
+                renderScene(endingId);
+                return;
+            }
+
+            if (choice.next === 'travel_stop' && currentSceneName !== 'travel_stop') {
+                travelReturnScene = currentSceneName;
+            }
+
+            if (choice.resumeTravel) {
+                renderScene(travelReturnScene);
+                return;
+            }
+
+            if (choice.openMerchant) {
+                const shopScene = currentSceneName === 'travel_stop' ? travelReturnScene : currentSceneName;
+                const regionNames = { forest: '荒林', border: '邊境', mountain: '雪山', dwarf: '矮人帝國', free: '自由國度' };
+                const regionName = regionNames[getMerchantRegion(shopScene)] || '沿途';
+                renderRoadEvent({ id: 'merchant', title: `${regionName}旅行商店`, text: `${regionName}商人拿出當地貨物。行會好感 ${merchantFavor}，目前折扣 ${Math.round(getMerchantDiscount() * 100)}%。`, fromTravelStop: true }, shopScene);
+                return;
+            }
+
+            if (!choice.travel && choice.next && ENDING_ACHIEVEMENTS.some(achievement => achievement.id === choice.next)) {
+                recordEndingAchievement(choice.next);
+            }
+
+            if (choice.travel) {
+                triggerRoadEvent(choice.next);
+                return;
+            }
+
+            renderScene(choice.next);
+        }
+
+        function renderScene(sceneName) {
+            const scene = gameStories[sceneName];
+            if (!scene) return;
+            const storyContent = document.getElementById('storyContent');
+            const choicesContainer = document.getElementById('choicesContainer');
+            const sceneIcon = document.getElementById('sceneIcon');
+            currentSceneName = sceneName;
+            currentRoadEventId = null;
+            gameOverMessage = '';
+            updateJourneyMap(sceneName);
+            storyContent.innerHTML = '';
+            choicesContainer.innerHTML = '';
+            if (sceneIcon) sceneIcon.innerHTML = ICON_SVGS[scene.icon] || '';
+            const paragraphs = scene.text.split('\n\n');
+            paragraphs.forEach(paragraph => { const p = document.createElement('p'); p.textContent = paragraph; storyContent.appendChild(p); });
+
+            // 支持動態選擇
+            let choices = scene.choices;
+            if (typeof scene.choices === 'string') {
+                try {
+                    const fn = new Function('hasEscort', 'return ' + scene.choices);
+                    choices = fn(hasEscort);
+                } catch(e) {
+                    choices = [];
+                }
+            }
+
+            choices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn ' + (idx % 2 === 0 ? 'primary' : 'secondary');
+                const keys = ['star','heart','spark'];
+                const key = keys[idx % keys.length];
+                btn.innerHTML = ICON_SVGS[key] || ICON_SVGS.star;
+                const span = document.createElement('span');
+                span.className = 'choice-text'; span.textContent = choice.text; btn.appendChild(span);
+
+                btn.onclick = () => handleChoice(choice);
+
+                choicesContainer.appendChild(btn);
+            });
+
+            storyContent.scrollTop = 0;
+            saveProgress();
+            if (ENDING_ACHIEVEMENTS.some(achievement => achievement.id === sceneName)) showEndingAnimation(sceneName);
+        }
+
+        // 載入已累積的成就；新旅程僅在玩家開始後建立。
+        loadAchievementCounts();
+        renderAchievements();
+        updateLoadButtons();
+        resetGameState();
+        updateHUD();
+    </script>
+</body>
+</html>
